@@ -43,12 +43,14 @@
     <link href="http://yoursite.com/2015/11/10/%E4%BD%BF%E7%94%A8%20Github%20Pages%20+%20Hexo%20+%20%E5%A4%9A%E8%AF%B4%20%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%85%A8%E8%BF%87%E7%A8%8B/"/>
     <id>http://yoursite.com/2015/11/10/使用 Github Pages + Hexo + 多说 搭建博客全过程/</id>
     <published>2015-11-10T03:27:33.000Z</published>
-    <updated>2015-11-10T09:10:19.086Z</updated>
-    <content type="html"><![CDATA[<p>看了很多博客，最后发现官方文档才是最可靠的！谨记！<br>本文只是自己尝试过程的记录，并非全部搭建方法。<br>&lt; 假设 git 已安，Github 已注册 &gt;</p>
+    <updated>2015-11-10T09:11:53.978Z</updated>
+    <content type="html"><![CDATA[<p>看了很多博客，最后发现官方文档才是最可靠的！谨记！<br>本文只是自己尝试过程的记录，并非全部搭建方法。<br>&lt; 假设 git 已安装，Github 已注册 &gt;</p>
 <blockquote>
 <p>搭建环境：<br>os: Ubuntu 14.04.3 LTS<br>node: 4.2.2<br>hexo: 3.1.1<br>hexo theme: NexT<br>git: 1.9.1</p>
 </blockquote>
-<h2 id="<!-more->"><a id="more"></a></h2><h2 id="Step_1_安装_Node-js">Step 1 安装 Node.js</h2><ul>
+<a id="more"></a>
+<hr>
+<h2 id="Step_1_安装_Node-js">Step 1 安装 Node.js</h2><ul>
 <li>从<a href="https://nodejs.org/en/download/" target="_blank" rel="external">官网</a>下载系统对应的源码</li>
 <li>依次执行以下命令解压编译安装</li>
 </ul>
@@ -129,11 +131,10 @@
 </blockquote>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>看了很多博客，最后发现官方文档才是最可靠的！谨记！<br>本文只是自己尝试过程的记录，并非全部搭建方法。<br>&lt; 假设 git 已安，Github 已注册 &gt;</p>
+    <![CDATA[<p>看了很多博客，最后发现官方文档才是最可靠的！谨记！<br>本文只是自己尝试过程的记录，并非全部搭建方法。<br>&lt; 假设 git 已安装，Github 已注册 &gt;</p>
 <blockquote>
 <p>搭建环境：<br>os: Ubuntu 14.04.3 LTS<br>node: 4.2.2<br>hexo: 3.1.1<br>hexo theme: NexT<br>git: 1.9.1</p>
-</blockquote>
-<h2 id="<!-more->">]]>
+</blockquote>]]>
     
     </summary>
     
