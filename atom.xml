@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title><![CDATA[kiya's pigsty]]></title>
-  <subtitle><![CDATA[No Further Selay!]]></subtitle>
+  <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
   <updated>2015-11-10T06:44:23.013Z</updated>
