@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-11-11T08:17:30.015Z</updated>
+  <updated>2015-11-11T08:23:28.367Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://yoursite.com/2015/11/11/Python%20%E4%B9%8B%20%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%A4%9A%E6%80%81%E5%BC%95%E5%8F%91%E7%9A%84%E8%A1%80%E6%A1%88/"/>
     <id>http://yoursite.com/2015/11/11/Python 之 接口和多态引发的血案/</id>
     <published>2015-11-11T07:52:39.000Z</published>
-    <updated>2015-11-11T08:17:30.015Z</updated>
+    <updated>2015-11-11T08:23:28.367Z</updated>
     <content type="html"><![CDATA[<h1 id="事故发生地">事故发生地</h1><p>在学习<a href="http://www.maiziedu.com/course/python/545-7480/" target="_blank" rel="external"> Python 面向对象视频 之 鸭子类型与多态 </a>时看到这样两句话不得其解：</p>
 <blockquote>
 <p>非动态语言必须通过继承和接口实现多态<br>动态语言不需要实现接口</p>
@@ -74,7 +74,7 @@
     
     </summary>
     
-      <category term="python" scheme="http://yoursite.com/tags/python/"/>
+      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
     
       <category term="Python" scheme="http://yoursite.com/categories/Python/"/>
     
