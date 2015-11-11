@@ -36,7 +36,7 @@
 
 
 
-  <meta name="keywords" content="Hexo,next" />
+  <meta name="keywords" content="python," />
 
 
 
@@ -47,16 +47,22 @@
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.">
+<meta name="description" content="事故发生地在学习 Python 面向对象视频 之 鸭子类型与多态 时看到这样两句话不得其解：
+
+非动态语言必须通过继承和接口实现多态动态语言不需要实现接口">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://yoursite.com/2015/11/09/hello-world/index.html">
+<meta property="og:title" content="Python 之 接口和多态引发的血案">
+<meta property="og:url" content="http://yoursite.com/2015/11/11/Python 之 接口和多态引发的血案/index.html">
 <meta property="og:site_name" content="kiya's pigsty">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.">
-<meta property="og:updated_time" content="2015-11-10T09:13:09.726Z">
+<meta property="og:description" content="事故发生地在学习 Python 面向对象视频 之 鸭子类型与多态 时看到这样两句话不得其解：
+
+非动态语言必须通过继承和接口实现多态动态语言不需要实现接口">
+<meta property="og:updated_time" content="2015-11-11T08:08:52.807Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.">
+<meta name="twitter:title" content="Python 之 接口和多态引发的血案">
+<meta name="twitter:description" content="事故发生地在学习 Python 面向对象视频 之 鸭子类型与多态 时看到这样两句话不得其解：
+
+非动态语言必须通过继承和接口实现多态动态语言不需要实现接口">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -68,7 +74,7 @@
 
 
 
-  <title> Hello World | kiya's pigsty </title>
+  <title> Python 之 接口和多态引发的血案 | kiya's pigsty </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -225,7 +231,7 @@
             
             
               
-                Hello World
+                Python 之 接口和多态引发的血案
               
             
           </h1>
@@ -235,11 +241,26 @@
 
           <span class="post-time">
             发表于
-            <time itemprop="dateCreated" datetime="2015-11-09T11:11:11+08:00" content="2015-11-09">
-              2015-11-09
+            <time itemprop="dateCreated" datetime="2015-11-11T15:52:39+08:00" content="2015-11-11">
+              2015-11-11
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
@@ -247,8 +268,8 @@
 
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2015/11/09/hello-world/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/09/hello-world/" itemprop="commentsCount"></span>
+                <a href="/2015/11/11/Python 之 接口和多态引发的血案/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/11/Python 之 接口和多态引发的血案/" itemprop="commentsCount"></span>
                 </a>
               </span>
 
@@ -271,21 +292,62 @@
       
 
       
-        <span itemprop="articleBody"><p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+        <span itemprop="articleBody"><h1 id="事故发生地">事故发生地</h1><p>在学习<a href="http://www.maiziedu.com/course/python/545-7480/" target="_blank" rel="external"> Python 面向对象视频 之 鸭子类型与多态 </a>时看到这样两句话不得其解：</p>
+<blockquote>
+<p>非动态语言必须通过继承和接口实现多态<br>动态语言不需要实现接口</p>
+</blockquote>
 <a id="more"></a>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+<hr>
+<h1 id="菜鸟的问题">菜鸟的问题</h1><p>(非动态语言以 Java 为例，动态语言以 Python 为例)</p>
+<ol>
+<li>接口和多态是什么关系？</li>
+<li>Python 为什么没有接口？没有接口怎么实现接口对应的设计模式</li>
+<li>Python 为什么没有重载？</li>
+<li>Python 的多态是什么样的？</li>
+</ol>
+<hr>
+<h2 id="接口和多态是什么关系？">接口和多态是什么关系？</h2><p>  在我的理解中，多态具有两种形式，重载和重写：</p>
+<blockquote>
+<p><strong>重载</strong>：<em>在同一个类中</em>，相同的方法名对应着不同的方法实现，其区别在于他们需要的参数和返回值不同。<br><strong>重写</strong>：<em>用于父类和子类间</em>，子类重写父类的方法，只是对应的方法实现不同，其方法名和参数都相同。</p>
+</blockquote>
+<p>这样看来，重写是基于继承的。那么接口呢？好像除了强制要求子类实现某些方法，我不知道还有什么别的作用。<br>正因如此，接口只是一个规范。在多个类都实现一个接口的时候他的作用就体现出来了，我们不需要知道在某个类中这个方法的具体实现，只需要这个类中有这个方法而我们可以直接调用就可以了。有了这样一个统一的标准，我们就不必担心同样功能的方法被起了各种各样的名字了。<br>所以，我觉得可以用这么一句话回答这个问题，<strong>接口不是实现多态的，而是基于多态的，有了多态接口才能发挥作用</strong>。</p>
+<hr>
+<h2 id="python_为什么没有接口？没有接口怎么实现接口对应的设计模式">python 为什么没有接口？没有接口怎么实现接口对应的设计模式</h2><p>接口的作用就是规范，规范参数类型，返回值等等，从而使相同的调用能够实现不同的效果；并且接口也是为了用来弥补语言自己表达能力的不足，如：Java 只支持单继承，为了使类拥有更多的特性，使用了多实现来弥补。<br>而在 python 中，变量是没有类型的，不需要事先规定，不管调用者传入什么类型的对象，被调用者就会认为那就是我所需要的对象(鸭子类型)，如果在运行时传入的对象不具备需要的属性或方法，程序会直接报错。需要实现这个方法的话，就照实现就是了，返回和形参不限制类型，比如：在创建了类的实例后，动态地给该实例加上一个函数属性。这就是动态类型的优势。<br>这种风格被称为“<strong>鸭子类型</strong>”：</p>
+<blockquote>
+<p>在这种风格中，一个对象有效的语义，不是由继承自特定的类或实现特定的接口，而是由”当前方法和属性的集合”决定。<br>在我想成为鸭子的时候，不是我必须真的是个鸭子，而是我的行为表现的像是个鸭子，那我就是个鸭子</p>
+</blockquote>
+<p>相关概念 - “<strong>鸭子测试</strong>”：</p>
+<blockquote>
+<p>“当看到一只鸟走起来像鸭子、游泳起来像鸭子、叫起来也像鸭子，那么这只鸟就可以被称为鸭子。”<br>“换言之，不要检查它是不是一个鸭子：检查它像不像一个鸭子地叫，等等。取决于你需要哪个像鸭子的行为的子集来使用语言。”</p>
+</blockquote>
+<hr>
+<h2 id="Python_为什么没有重载？">Python 为什么没有重载？</h2><blockquote>
+<p>函数重载主要是为了解决两个问题：</p>
+<ol>
+<li>可变参数类型。</li>
+<li>可变参数个数。</li>
+</ol>
+</blockquote>
+<p>另外，一个基本的设计原则是，仅仅当两个函数除了参数类型和参数个数不同以外，其功能是完全相同的，此时才使用函数重载，如果两个函数的功能其实不同，那么不应当使用重载，而应当使用一个名字不同的函数。<br><em>对于情况 1</em>，函数功能相同，但是参数类型不同，python 如何处理？答案是根本不需要处理，因为 python 可以接受任何类型的参数，如果函数的功能相同，那么不同的参数类型在 python 中很可能是相同的代码，没有必要做成两个不同函数。<br><em>对于情况 2</em> ，函数功能相同，但参数个数不同，python 如何处理？大家知道，答案就是缺省参数。对那些缺少的参数设定为缺省参数即可解决问题。因为你假设函数功能相同，那么那些缺少的参数终归是需要用的。<br>好了，鉴于情况 1 跟 情况 2 都有了解决方案，python 自然就不需要函数重载了。</p>
+<hr>
+<h2 id="Python_的多态是什么样的？">Python 的多态是什么样的？</h2><p>多态即多种形态，在运行时确定其状态，在编译阶段无法确定其类型，这就是多态。<br>1）Python是解释性语言。不进行预编译，因此它就只在运行时确定其状态；<br>2）Python中变量是弱类型的。在定义时不用指明其类型，它会根据需要在运行时确定变量的类型。</p>
+<hr>
+<blockquote>
+<p>结语：一些粗浅之语，有长进再补充。</p>
+</blockquote>
+<hr>
+<h1 id="Reference：">Reference：</h1><p><a href="http://www.zhihu.com/question/20111251" target="_blank" rel="external"> Java 中的接口有什么作用？</a><br><a href="http://www.zhihu.com/question/20685467" target="_blank" rel="external"> Python 里没有接口，如何写设计模式？</a><br><a href="http://www.zhihu.com/question/20053359" target="_blank" rel="external">为什么 Python  不支持函数重载？</a><br><a href="http://www.cnblogs.com/dolphin0520/archive/2013/04/03/2997499.html" target="_blank" rel="external"> Python面向对象编程(二)</a><br><a href="https://zh.wikipedia.org/wiki/%E9%B8%AD%E5%AD%90%E7%B1%BB%E5%9E%8B" target="_blank" rel="external">鸭子类型</a></p>
 </span>
       
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
       
 
 
@@ -294,13 +356,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2015/11/10/使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇/" rel="next" title="使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇">
+                <i class="fa fa-chevron-left"></i> 使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/11/10/使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇/" rel="prev" title="使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇">
-                使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -325,8 +387,8 @@
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2015/11/09/hello-world/"
-                   data-title="Hello World" data-url="http://yoursite.com/2015/11/09/hello-world/">
+              <div class="ds-thread" data-thread-key="2015/11/11/Python 之 接口和多态引发的血案/"
+                   data-title="Python 之 接口和多态引发的血案" data-url="http://yoursite.com/2015/11/11/Python 之 接口和多态引发的血案/">
               </div>
             
           </div>
@@ -445,7 +507,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick_Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create_a_new_post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run_server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate_static_files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy_to_remote_sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#事故发生地"><span class="nav-number">1.</span> <span class="nav-text">事故发生地</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#菜鸟的问题"><span class="nav-number">2.</span> <span class="nav-text">菜鸟的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#接口和多态是什么关系？"><span class="nav-number">2.1.</span> <span class="nav-text">接口和多态是什么关系？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python_为什么没有接口？没有接口怎么实现接口对应的设计模式"><span class="nav-number">2.2.</span> <span class="nav-text">python 为什么没有接口？没有接口怎么实现接口对应的设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python_为什么没有重载？"><span class="nav-number">2.3.</span> <span class="nav-text">Python 为什么没有重载？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python_的多态是什么样的？"><span class="nav-number">2.4.</span> <span class="nav-text">Python 的多态是什么样的？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference："><span class="nav-number">3.</span> <span class="nav-text">Reference：</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
