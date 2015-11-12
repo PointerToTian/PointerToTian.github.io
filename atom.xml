@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-11T08:23:28.367Z</updated>
+  <updated>2015-11-12T08:24:52.018Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -15,9 +15,84 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[Android 安全工具包（持续更新）]]></title>
+    <link href="http://kiya-z.github.io/2015/11/12/Android-security-tools/"/>
+    <id>http://kiya-z.github.io/2015/11/12/Android-security-tools/</id>
+    <published>2015-11-12T08:09:27.000Z</published>
+    <updated>2015-11-12T08:24:52.018Z</updated>
+    <content type="html"><![CDATA[<blockquote>
+<p><strong>工具清单</strong></p>
+<ul>
+<li>Apktool</li>
+<li>smali &amp; baksmali</li>
+<li>dex2jar</li>
+<li>JD-GUI</li>
+<li>signapk</li>
+<li>dx &amp; ddx</li>
+</ul>
+</blockquote>
+<p>以上工具可点击 <a href="https://github.com/kiya-z/Android/tree/master/tools" target="_blank" rel="external">这里</a> 打包下载</p>
+<p><strong>本文环境：<code>Ubuntu 14.04.3 LTS 64-bit</code></strong></p>
+<a id="more"></a>
+<hr>
+<h1 id="Apktool"><strong>Apktool</strong></h1><p>点击 <a href="http://ibotpeaches.github.io/Apktool/install/" target="_blank" rel="external">官网</a> 下载，里面也有详细的安装步骤。</p>
+<h3 id="中文步骤及注意事项">中文步骤及注意事项</h3><p>（<em>此处为 Apktool 2.x 版本</em>）</p>
+<ol>
+<li>右键另存 <a href="https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool" target="_blank" rel="external">脚本文件</a>，名为 <code>apktool</code> 。如果不能另存，打开 <a href="https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool" target="_blank" rel="external">脚本文件</a>， 复制全部内容到新建文件 <code>apktool</code> 中；</li>
+<li>下载 <a href="https://bitbucket.org/iBotPeaches/apktool/downloads" target="_blank" rel="external">apktool</a>，将其重命名为 <code>apktool.jar</code> 。</li>
+<li>如果是系统是 64 位，需要安装 32 位的库文件。如何安装可参考 <a href="http://stackoverflow.com/questions/23182765/how-to-install-ia32-libs-in-ubuntu-14-04-lts-trusty-tahr" target="_blank" rel="external">How to install ia32-libs in Ubuntu 14.04 LTS (Trusty Tahr)</a> . 或者直接执行以下命令：<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo -<span class="tag">i</span></span><br><span class="line">cd /etc/apt/sources<span class="class">.list</span><span class="class">.d</span></span><br><span class="line">echo <span class="string">"deb http://old-releases.ubuntu.com/ubuntu/ raring main restricted universe multiverse"</span> &gt;ia32-libs-raring<span class="class">.list</span></span><br><span class="line">apt-get update</span><br><span class="line">apt-get install ia32-libs</span><br><span class="line">rm ia32-libs-raring<span class="class">.list</span> /etc/apt/sources<span class="class">.list</span><span class="class">.d</span></span><br><span class="line">apt-get update</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>执行完成可按 <code>Ctrl+D</code> 注销 root .</p>
+<ol>
+<li>把 <code>apktool</code> 和 <code>apktool.jar</code> 两个文件移动到 <code>usr/local/bin</code> . 此步骤需要 <code>sudo</code> .</li>
+<li>为这两个文件加上可执行权限。</li>
+<li>执行 <code>apktool</code> 测试效果。如果提示 <code>can&#39;t find file apktool.jar</code> ，可能是因为当前用户没有 <code>apktool.jar</code> 的读权限，试试用 <code>sudo apktool</code> 或者为其加上读权限。</li>
+</ol>
+<hr>
+<h1 id="smali_&amp;_baksmali"><strong>smali &amp; baksmali</strong></h1><p>Apktool 中内置了 smali 和 baksmali，但我还是手痒痒的点击了 <a href="https://bitbucket.org/JesusFreke/smali/downloads" target="_blank" rel="external">下载</a> ，Aha ! 万一哪天用到了捏 ..</p>
+<hr>
+<h1 id="dex2jar"><strong>dex2jar</strong></h1><p>下载 <a href="https://bitbucket.org/pxb1988/dex2jar/downloads" target="_blank" rel="external">dex2jar</a> 解压，你可以选择为所有的 <code>.sh</code> 文件加上执行权限，目前我只加了 <code>d2j-dex2jar.sh</code> 和 <code>d2j_invoke.sh</code> 。如果报错找不到命令，就是因为你没有加执行权限。</p>
+<hr>
+<h1 id="JD-GUI"><strong>JD-GUI</strong></h1><p>去 <a href="http://jd.benow.ca/" target="_blank" rel="external">官网</a> 下载相应版本。<br>我下载的是 <code>.deb</code> 文件，安装命令为 <code>sudo dpkg -i filename</code> .</p>
+<hr>
+<h1 id="signapk"><strong>signapk</strong></h1><p>进行签名需要 <code>sianapk.sh</code> 、<code>signapk.jar</code> 和两个签名文件 <code>testkey.pk8</code> 、<code>testkey.x509.pem</code> 。<br><a href="https://github.com/kiya-z/Android/tree/master/tools/signapk" target="_blank" rel="external">点击下载</a></p>
+<hr>
+<h1 id="dx_&amp;_ddx"><strong>dx &amp; ddx</strong></h1><p><code>dx</code> 是整个编译过程的一部分，将 Java 字节码转换为 Dalvik 字节码（class 文件变成 dex 文件），<code>ddx</code> 则正好相反。<br>你可以在 SDK 中找到它们，或者 <a href="https://github.com/kiya-z/Android/tree/master/tools" target="_blank" rel="external">下载</a> 。</p>
+<hr>
+<blockquote>
+<p>to be continued.</p>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<blockquote>
+<p><strong>工具清单</strong></p>
+<ul>
+<li>Apktool</li>
+<li>smali &amp; baksmali</li>
+<li>dex2jar</li>
+<li>JD-GUI</li>
+<li>signapk</li>
+<li>dx &amp; ddx</li>
+</ul>
+</blockquote>
+<p>以上工具可点击 <a href="https://github.com/kiya-z/Android/tree/master/tools">这里</a> 打包下载</p>
+<p><strong>本文环境：<code>Ubuntu 14.04.3 LTS 64-bit</code></strong></p>]]>
+    
+    </summary>
+    
+      <category term="Android 安全" scheme="http://kiya-z.github.io/tags/Android-%E5%AE%89%E5%85%A8/"/>
+    
+      <category term="工具" scheme="http://kiya-z.github.io/tags/%E5%B7%A5%E5%85%B7/"/>
+    
+      <category term="Android" scheme="http://kiya-z.github.io/categories/Android/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[Python 之 接口和多态引发的血案]]></title>
-    <link href="http://kiya-z.github.io/2015/11/11/Python%20%E4%B9%8B%20%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%A4%9A%E6%80%81%E5%BC%95%E5%8F%91%E7%9A%84%E8%A1%80%E6%A1%88/"/>
-    <id>http://kiya-z.github.io/2015/11/11/Python 之 接口和多态引发的血案/</id>
+    <link href="http://kiya-z.github.io/2015/11/11/Python-a-murder-about-interface-and-polymorphism/"/>
+    <id>http://kiya-z.github.io/2015/11/11/Python-a-murder-about-interface-and-polymorphism/</id>
     <published>2015-11-11T07:52:39.000Z</published>
     <updated>2015-11-11T08:23:28.367Z</updated>
     <content type="html"><![CDATA[<h1 id="事故发生地">事故发生地</h1><p>在学习<a href="http://www.maiziedu.com/course/python/545-7480/" target="_blank" rel="external"> Python 面向对象视频 之 鸭子类型与多态 </a>时看到这样两句话不得其解：</p>
@@ -82,8 +157,8 @@
   
   <entry>
     <title><![CDATA[使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇]]></title>
-    <link href="http://kiya-z.github.io/2015/11/10/%E4%BD%BF%E7%94%A8%20Github%20Pages%20+%20Hexo%20+%20%E5%A4%9A%E8%AF%B4%20%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%85%A8%E8%BF%87%E7%A8%8B%20-%20%E5%9F%BA%E7%A1%80%E7%AF%87/"/>
-    <id>http://kiya-z.github.io/2015/11/10/使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇/</id>
+    <link href="http://kiya-z.github.io/2015/11/10/use-Github-Pages-Hexo-duoshuo-to-set-up-a-blog-basic-steps/"/>
+    <id>http://kiya-z.github.io/2015/11/10/use-Github-Pages-Hexo-duoshuo-to-set-up-a-blog-basic-steps/</id>
     <published>2015-11-10T03:27:33.000Z</published>
     <updated>2015-11-10T10:09:04.030Z</updated>
     <content type="html"><![CDATA[<p>看了很多博客，最后发现官方文档才是最可靠的！谨记！<br>本文只是自己尝试过程的记录，并非全部搭建方法。<br>&lt; 假设 git 已安装，Github 已注册 &gt;</p>
