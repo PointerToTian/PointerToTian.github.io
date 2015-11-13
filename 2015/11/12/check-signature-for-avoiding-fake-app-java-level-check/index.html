@@ -47,26 +47,17 @@
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
 
 
-<meta name="description" content="测试环境Ubuntu 14.04Lenovo Android 5.1Lenovo Android 4.2.2Android Studio
-
-普及签名包名知识包名 (Package Name) 相当于「应用的身份证」，是系统用来区分不同应用的字段，重复的包名会被认为是同一款应用。签名文件相当于「开发者的身份证」，目的是为了检验应用是否被人更改过（应用必须签名过才能正常安装）。
-包名相同签名相同时，会">
+<meta name="description" content="测试环境Ubuntu 14.04Lenovo Android 5.1Lenovo Android 4.2.2Android Studio">
 <meta property="og:type" content="article">
 <meta property="og:title" content="校验数字签名防止 apk 被二次打包 - Java层校验（大众点评为例）">
 <meta property="og:url" content="http://kiya-z.github.io/2015/11/12/check-signature-for-avoiding-fake-app-java-level-check/index.html">
 <meta property="og:site_name" content="kiya's pigsty">
-<meta property="og:description" content="测试环境Ubuntu 14.04Lenovo Android 5.1Lenovo Android 4.2.2Android Studio
-
-普及签名包名知识包名 (Package Name) 相当于「应用的身份证」，是系统用来区分不同应用的字段，重复的包名会被认为是同一款应用。签名文件相当于「开发者的身份证」，目的是为了检验应用是否被人更改过（应用必须签名过才能正常安装）。
-包名相同签名相同时，会">
+<meta property="og:description" content="测试环境Ubuntu 14.04Lenovo Android 5.1Lenovo Android 4.2.2Android Studio">
 <meta property="og:image" content="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dianping-crash.jpeg-style1">
-<meta property="og:updated_time" content="2015-11-13T04:44:35.534Z">
+<meta property="og:updated_time" content="2015-11-13T06:30:44.322Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="校验数字签名防止 apk 被二次打包 - Java层校验（大众点评为例）">
-<meta name="twitter:description" content="测试环境Ubuntu 14.04Lenovo Android 5.1Lenovo Android 4.2.2Android Studio
-
-普及签名包名知识包名 (Package Name) 相当于「应用的身份证」，是系统用来区分不同应用的字段，重复的包名会被认为是同一款应用。签名文件相当于「开发者的身份证」，目的是为了检验应用是否被人更改过（应用必须签名过才能正常安装）。
-包名相同签名相同时，会">
+<meta name="twitter:description" content="测试环境Ubuntu 14.04Lenovo Android 5.1Lenovo Android 4.2.2Android Studio">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -299,9 +290,9 @@
         <span itemprop="articleBody"><blockquote>
 <p>测试环境<br>Ubuntu 14.04<br>Lenovo Android 5.1<br>Lenovo Android 4.2.2<br>Android Studio</p>
 </blockquote>
+<a id="more"></a>
 <h2 id="普及签名包名知识">普及签名包名知识</h2><p>包名 (Package Name) 相当于「应用的身份证」，是系统用来<strong>区分不同应用</strong>的字段，重复的包名会被认为是同一款应用。<br>签名文件相当于「开发者的身份证」，目的是为了<strong>检验应用是否被人更改过</strong>（应用必须签名过才能正常安装）。</p>
 <p>包名相同签名相同时，会发生 替换安装 / 应用升级；<br>包名相同签名不同时，安装失败；<br>包名不同签名相同时，相当于同一开发者的两个应用，互相不冲突。</p>
-<a id="more"></a>
 <blockquote>
 <p>签名的注意事项<br>所有的Android应用都必须有数字签名，没有不存在数字签名的应用，包括模拟器上运行的。Android系统不会安装没有数字证书的应用。<br>签名的数字证书不需要权威机构来认证，是开发者自己产生的数字证书，即所谓的自签名。<br>正式发布一个Android应用时，必须使用一个合适的私钥生成的数字证书来给程序签名，不能使用ADT插件或者ANT工具生成的调试证书来发布。<br>Android将数字证书用来标识应用程序的作者和在应用程序之间建立信任关系，而不是用来决定最终用户可以安装哪些应用程序。</p>
 </blockquote>
@@ -334,7 +325,7 @@
 <p>番外：<br>而另一台手机 (Lenovo Android 4.2.2) 测试进程会不断重新创建。<br>应用 crash 之后 App 对应的 Process 都被杀死，然后安排重启 Service，重新启动 Task 栈顶的 Activity 。</p>
 </blockquote>
 <hr>
-<h2 id="Rerfernce">Rerfernce</h2><p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">Android软件安全与逆向分析</a><br><a href="http://www.wandoujia.com/blog/xibaibai-diary-3" target="_blank" rel="external">洗白白手记：绕开 Android 应用开发的那些「坑」</a><br><a href="http://www.oschina.net/question/163910_27292#tags_nav" target="_blank" rel="external">给 Android 应用程序签名</a></p>
+<h2 id="Reference">Reference</h2><p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">Android软件安全与逆向分析</a><br><a href="http://www.wandoujia.com/blog/xibaibai-diary-3" target="_blank" rel="external">洗白白手记：绕开 Android 应用开发的那些「坑」</a><br><a href="http://www.oschina.net/question/163910_27292#tags_nav" target="_blank" rel="external">给 Android 应用程序签名</a></p>
 </span>
       
     </div>
@@ -507,7 +498,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#普及签名包名知识"><span class="nav-number">1.</span> <span class="nav-text">普及签名包名知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为大众点评换签名"><span class="nav-number">2.</span> <span class="nav-text">为大众点评换签名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分析校验方法"><span class="nav-number">3.</span> <span class="nav-text">分析校验方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#怎么退出的？"><span class="nav-number">3.1.</span> <span class="nav-text">怎么退出的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码探索"><span class="nav-number">3.2.</span> <span class="nav-text">代码探索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流程修改"><span class="nav-number">3.3.</span> <span class="nav-text">流程修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打包签名"><span class="nav-number">3.4.</span> <span class="nav-text">打包签名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rerfernce"><span class="nav-number">4.</span> <span class="nav-text">Rerfernce</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#普及签名包名知识"><span class="nav-number">1.</span> <span class="nav-text">普及签名包名知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为大众点评换签名"><span class="nav-number">2.</span> <span class="nav-text">为大众点评换签名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分析校验方法"><span class="nav-number">3.</span> <span class="nav-text">分析校验方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#怎么退出的？"><span class="nav-number">3.1.</span> <span class="nav-text">怎么退出的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码探索"><span class="nav-number">3.2.</span> <span class="nav-text">代码探索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流程修改"><span class="nav-number">3.3.</span> <span class="nav-text">流程修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打包签名"><span class="nav-number">3.4.</span> <span class="nav-text">打包签名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
