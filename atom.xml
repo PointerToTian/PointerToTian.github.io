@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-12T15:52:02.659Z</updated>
+  <updated>2015-11-13T04:44:35.534Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -19,8 +19,11 @@
     <link href="http://kiya-z.github.io/2015/11/12/check-signature-for-avoiding-fake-app-java-level-check/"/>
     <id>http://kiya-z.github.io/2015/11/12/check-signature-for-avoiding-fake-app-java-level-check/</id>
     <published>2015-11-12T09:36:23.000Z</published>
-    <updated>2015-11-12T15:52:02.659Z</updated>
-    <content type="html"><![CDATA[<h2 id="普及签名包名知识">普及签名包名知识</h2><p>包名 (Package Name) 相当于「应用的身份证」，是系统用来<strong>区分不同应用</strong>的字段，重复的包名会被认为是同一款应用。<br>签名文件相当于「开发者的身份证」，目的是为了<strong>检验应用是否被人更改过</strong>（应用必须签名过才能正常安装）。</p>
+    <updated>2015-11-13T04:44:35.534Z</updated>
+    <content type="html"><![CDATA[<blockquote>
+<p>测试环境<br>Ubuntu 14.04<br>Lenovo Android 5.1<br>Lenovo Android 4.2.2<br>Android Studio</p>
+</blockquote>
+<h2 id="普及签名包名知识">普及签名包名知识</h2><p>包名 (Package Name) 相当于「应用的身份证」，是系统用来<strong>区分不同应用</strong>的字段，重复的包名会被认为是同一款应用。<br>签名文件相当于「开发者的身份证」，目的是为了<strong>检验应用是否被人更改过</strong>（应用必须签名过才能正常安装）。</p>
 <p>包名相同签名相同时，会发生 替换安装 / 应用升级；<br>包名相同签名不同时，安装失败；<br>包名不同签名相同时，相当于同一开发者的两个应用，互相不冲突。</p>
 <a id="more"></a>
 <blockquote>
@@ -49,16 +52,19 @@
 <p>找到 <code>con_2</code> 的定义:<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.line</span> 359<span class="keyword"></span><br><span class="line">:cond_2</span><span class="instruction"></span><br><span class="line">const/4 </span><span class="variable">v8</span>, 0x1</span><br><span class="line"><span class="instruction"></span><br><span class="line">goto </span>:goto_0</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">:goto_0</span></span><br><span class="line">    <span class="keyword">return</span> v8</span><br></pre></td></tr></table></figure>
 <p>所以把 <code>if-nez v9, :cond_2</code> 改成 <code>if-eqz v9, :cond_2</code> 就可以了，当然，修改方法还有很多。</p>
-<h3 id="打包签名">打包签名</h3><p>点评可以正常打开了！</p>
+<h3 id="打包签名">打包签名</h3><p>点评可以正常打开，正常登录，正常使用了。</p>
 <hr>
 <blockquote>
-<p>结语 : 没有找到创建新进程的地方，可能是系统的重试机制。</p>
+<p>番外：<br>而另一台手机 (Lenovo Android 4.2.2) 测试进程会不断重新创建。<br>应用 crash 之后 App 对应的 Process 都被杀死，然后安排重启 Service，重新启动 Task 栈顶的 Activity 。</p>
 </blockquote>
 <hr>
 <h2 id="Rerfernce">Rerfernce</h2><p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">Android软件安全与逆向分析</a><br><a href="http://www.wandoujia.com/blog/xibaibai-diary-3" target="_blank" rel="external">洗白白手记：绕开 Android 应用开发的那些「坑」</a><br><a href="http://www.oschina.net/question/163910_27292#tags_nav" target="_blank" rel="external">给 Android 应用程序签名</a></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<h2 id="普及签名包名知识">普及签名包名知识</h2><p>包名 (Package Name) 相当于「应用的身份证」，是系统用来<strong>区分不同应用</strong>的字段，重复的包名会被认为是同一款应用。<br>签名文件相当于「开发者的身份证」，目的是为了<strong>检验应用是否被人更改过</strong>（应用必须签名过才能正常安装）。</p>
+    <![CDATA[<blockquote>
+<p>测试环境<br>Ubuntu 14.04<br>Lenovo Android 5.1<br>Lenovo Android 4.2.2<br>Android Studio</p>
+</blockquote>
+<h2 id="普及签名包名知识">普及签名包名知识</h2><p>包名 (Package Name) 相当于「应用的身份证」，是系统用来<strong>区分不同应用</strong>的字段，重复的包名会被认为是同一款应用。<br>签名文件相当于「开发者的身份证」，目的是为了<strong>检验应用是否被人更改过</strong>（应用必须签名过才能正常安装）。</p>
 <p>包名相同签名相同时，会发生 替换安装 / 应用升级；<br>包名相同签名不同时，安装失败；<br>包名不同签名相同时，相当于同一开发者的两个应用，互相不冲突。</p>]]>
     
     </summary>
