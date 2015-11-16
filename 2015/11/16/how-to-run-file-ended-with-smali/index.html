@@ -36,7 +36,7 @@
 
 
 
-  <meta name="keywords" content="Github,Hexo," />
+  <meta name="keywords" content="Android 安全,smali,反编译," />
 
 
 
@@ -47,22 +47,16 @@
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
 
 
-<meta name="description" content="看了很多博客，最后发现官方文档才是最可靠的！谨记！本文只是自己尝试过程的记录，并非全部搭建方法。&amp;lt; 假设 git 已安装，Github 已注册 &amp;gt;
-
-搭建环境：os: Ubuntu 14.04.3 LTSnode: 4.2.2hexo: 3.1.1hexo theme: NexTgit: 1.9.1">
+<meta name="description" content="准备 smali 程序">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇">
-<meta property="og:url" content="http://kiya-z.github.io/2015/11/10/use-Github-Pages-Hexo-duoshuo-to-set-up-a-blog-basic-steps/index.html">
+<meta property="og:title" content="如何运行 .smali 程序">
+<meta property="og:url" content="http://kiya-z.github.io/2015/11/16/how-to-run-file-ended-with-smali/index.html">
 <meta property="og:site_name" content="kiya's pigsty">
-<meta property="og:description" content="看了很多博客，最后发现官方文档才是最可靠的！谨记！本文只是自己尝试过程的记录，并非全部搭建方法。&amp;lt; 假设 git 已安装，Github 已注册 &amp;gt;
-
-搭建环境：os: Ubuntu 14.04.3 LTSnode: 4.2.2hexo: 3.1.1hexo theme: NexTgit: 1.9.1">
-<meta property="og:updated_time" content="2015-11-10T10:09:04.030Z">
+<meta property="og:description" content="准备 smali 程序">
+<meta property="og:updated_time" content="2015-11-16T09:29:57.017Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇">
-<meta name="twitter:description" content="看了很多博客，最后发现官方文档才是最可靠的！谨记！本文只是自己尝试过程的记录，并非全部搭建方法。&amp;lt; 假设 git 已安装，Github 已注册 &amp;gt;
-
-搭建环境：os: Ubuntu 14.04.3 LTSnode: 4.2.2hexo: 3.1.1hexo theme: NexTgit: 1.9.1">
+<meta name="twitter:title" content="如何运行 .smali 程序">
+<meta name="twitter:description" content="准备 smali 程序">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -74,7 +68,7 @@
 
 
 
-  <title> 使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇 | kiya's pigsty </title>
+  <title> 如何运行 .smali 程序 | kiya's pigsty </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -231,7 +225,7 @@
             
             
               
-                使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇
+                如何运行 .smali 程序
               
             
           </h1>
@@ -241,8 +235,8 @@
 
           <span class="post-time">
             发表于
-            <time itemprop="dateCreated" datetime="2015-11-10T11:27:33+08:00" content="2015-11-10">
-              2015-11-10
+            <time itemprop="dateCreated" datetime="2015-11-16T17:27:19+08:00" content="2015-11-16">
+              2015-11-16
             </time>
           </span>
 
@@ -251,8 +245,8 @@
               &nbsp; | &nbsp; 分类于
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Cool/" itemprop="url" rel="index">
-                    <span itemprop="name">Cool</span>
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
                   </a>
                 </span>
 
@@ -268,8 +262,8 @@
 
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2015/11/10/use-Github-Pages-Hexo-duoshuo-to-set-up-a-blog-basic-steps/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/10/use-Github-Pages-Hexo-duoshuo-to-set-up-a-blog-basic-steps/" itemprop="commentsCount"></span>
+                <a href="/2015/11/16/how-to-run-file-ended-with-smali/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/16/how-to-run-file-ended-with-smali/" itemprop="commentsCount"></span>
                 </a>
               </span>
 
@@ -292,91 +286,15 @@
       
 
       
-        <span itemprop="articleBody"><p>看了很多博客，最后发现官方文档才是最可靠的！谨记！<br>本文只是自己尝试过程的记录，并非全部搭建方法。<br>&lt; 假设 git 已安装，Github 已注册 &gt;</p>
-<blockquote>
-<p>搭建环境：<br>os: Ubuntu 14.04.3 LTS<br>node: 4.2.2<br>hexo: 3.1.1<br>hexo theme: NexT<br>git: 1.9.1</p>
-</blockquote>
-<a id="more"></a>
+        <span itemprop="articleBody"><h2 id="准备_smali_程序">准备 smali 程序</h2><a id="more"></a>
+<p>从 《Android 软件安全与逆向》书中抠出一段，起名为 <code>FirstSmali.smali</code> ：<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LFirstSmali;</span>  <span class="comment"># 定义类名</span></span><br><span class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span>   <span class="comment"># 定义父类</span></span><br><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span><span class="function"> main(</span><span class="keyword">[</span><span class="class">Ljava/lang/String;</span><span class="function">)</span>V     <span class="comment"># 声明静态方法</span></span><br><span class="line"><span class="keyword">    .registers</span> 4     <span class="comment"># 寄存器</span></span><br><span class="line">    <span class="comment">#.parameter      # 参数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">    .prologue</span>      <span class="comment"># 代码起始</span></span><br><span class="line">   <span class="instruction"> nop</span><br><span class="line"></span>   <span class="instruction"> nop</span><br><span class="line"></span>   <span class="instruction"> nop</span><br><span class="line"></span>   <span class="instruction"> nop</span><br><span class="line"></span>    <span class="comment">#数据定义</span></span><br><span class="line">   <span class="instruction"> const/16 </span><span class="variable">v0</span>,0x8</span><br><span class="line">   <span class="instruction"> const/4 </span><span class="variable">v1</span>,0x5</span><br><span class="line">   <span class="instruction"> const/4 </span><span class="variable">v2</span>,0x3</span><br><span class="line">    <span class="comment">#数据操作</span></span><br><span class="line">   <span class="instruction"> move </span><span class="variable">v1</span>,<span class="variable">v2</span></span><br><span class="line">    <span class="comment">#数组操作</span></span><br><span class="line">   <span class="instruction"> new-array </span><span class="variable">v0</span>,<span class="variable">v0</span>,<span class="keyword">[</span>I</span><br><span class="line">   <span class="instruction"> array-length </span><span class="variable">v1</span>,<span class="variable">v0</span></span><br><span class="line">    <span class="comment">#实例操作</span></span><br><span class="line">   <span class="instruction"> new-instance </span><span class="variable">v1</span>,<span class="class">Ljava/lang/StringBuilder;</span></span><br><span class="line">    <span class="comment">#方法调用</span></span><br><span class="line">   <span class="instruction"> invoke-direct </span>&#123;<span class="variable">v1</span>&#125;,<span class="class">Ljava/lang/StringBuilder;</span><span class="function">-&gt;&lt;init&gt;(</span><span class="function">)</span>V</span><br><span class="line">    <span class="comment">#跳转</span></span><br><span class="line">   <span class="instruction"> if-nez </span><span class="variable">v0</span>,<span class="keyword"> :cond_0</span></span><br><span class="line">   <span class="instruction"> goto </span>:goto_0</span><br><span class="line">   <span class="keyword"> :cond_0</span></span><br><span class="line">    <span class="comment">#数据转换</span></span><br><span class="line">   <span class="instruction"> int-to-float </span><span class="variable">v2</span>,<span class="variable">v2</span></span><br><span class="line">    <span class="comment">#运算</span></span><br><span class="line">   <span class="instruction"> add-float </span><span class="variable">v2</span>,<span class="variable">v2</span>,<span class="variable">v2</span></span><br><span class="line">    <span class="comment">#比较</span></span><br><span class="line">   <span class="instruction"> cmpl-float </span><span class="variable">v0</span>,<span class="variable">v2</span>,<span class="variable">v2</span></span><br><span class="line">    <span class="comment">#字段操作</span></span><br><span class="line">   <span class="instruction"> sget-object </span><span class="variable">v0</span>,<span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></span><br><span class="line">   <span class="instruction"> const-string </span><span class="variable">v1</span>,<span class="string">"Hello Smali"</span></span><br><span class="line">    <span class="comment">#调用</span></span><br><span class="line">   <span class="instruction"> invoke-virtual </span>&#123;<span class="variable">v0</span>,<span class="variable">v1</span>&#125;, <span class="class">Ljava/io/PrintStream;</span><span class="function">-&gt;println(</span><span class="class">Ljava/lang/String;</span><span class="function">)</span>V</span><br><span class="line">    <span class="comment">#返回</span></span><br><span class="line">   <span class="keyword"> :goto_0</span></span><br><span class="line">   <span class="instruction"> return-void</span><br><span class="line"></span>   <span class="instruction"> return-void </span>    <span class="comment"># 返回空</span><span class="keyword"></span><br><span class="line"></span><br><span class="line">.end method</span></span><br></pre></td></tr></table></figure></p>
 <hr>
-<h2 id="Step_1_安装_Node-js">Step 1 安装 Node.js</h2><ul>
-<li>从<a href="https://nodejs.org/en/download/" target="_blank" rel="external">官网</a>下载系统对应的源码</li>
-<li>依次执行以下命令解压编译安装<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -xzvf <span class="keyword">node</span><span class="identifier"></span><span class="title">-v4</span>.<span class="number">2.2</span>.tar.gz</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
+<h2 id="编译_smali_程序">编译 smali 程序</h2><p>将 <code>.smali</code> 文件编译为 <code>.dex</code> 文件 :<br><code>java -jar smali.jar -o FirstSmali.dex FirstSmali.smali</code></p>
 <hr>
-<h2 id="Step_2_安装_Hexo">Step 2 安装 Hexo</h2><ul>
-<li>执行以下命令<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="operator"><span class="keyword">install</span> -<span class="keyword">g</span> hexo</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h2 id="Step_3_搭建本地博客">Step 3 搭建本地博客</h2><ul>
-<li><p>初始化一枚目录存放博客, 进入</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">hexo</span> init <span class="keyword">blog</span><br><span class="line"></span><span class="label">cd</span> <span class="keyword">blog</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="keyword">install</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>此时一个默认主题默认配置的 Hexo 博客就搭建完成了</p>
-<ul>
-<li><p>安装 Hexo 关于启动服务器的插件</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="operator"><span class="keyword">install</span> hexo-<span class="keyword">server</span> <span class="comment">--save</span></span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>启动服务器, 本地查看效果, 如果不指定端口，默认为4000</p>
-<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo <span class="keyword">server</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>打开 <a href="http://localhost:4000" target="_blank" rel="external">http://localhost:4000</a> 查看效果</p>
-</li>
-<li>使用 <strong>Ctrl+c</strong> 停止服务</li>
-</ul>
-<hr>
-<h2 id="Step_4_主题和配置">Step 4 主题和配置</h2><p>在 <a href="https://hexo.io/themes/" target="_blank" rel="external">https://hexo.io/themes/</a> 选择某个喜欢的主题，以 NexT 为例，假设当前目录为 “blog”。</p>
-<ul>
-<li>前往<a href="https://github.com/iissnan/hexo-theme-next/releases" target="_blank" rel="external">NexT主题发布页面</a>下载主题的压缩包<br>(这是 Next 的稳定版本，我试用了最新版本，有一些问题故转为稳定版本)</li>
-<li>解压并将目录更名为next</li>
-<li>将 next 移动至 <strong>blog/themes/</strong> 目录下</li>
-<li>将 blog 目录下的 <strong>_config.yml</strong> 文件中的 theme 属性值改为 next</li>
-<li>此时主题更换成功，可启动 server 验证效果</li>
-<li>对于 _config.yml 中的其他属性可根据情况自行修改，基本的有<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">title</span>: <span class="string">网站大标题</span></span><br><span class="line"><span class="attribute">subtitle</span>: <span class="string">网站小标题</span></span><br><span class="line"><span class="attribute">description</span>: <span class="string">你对于自己的描述</span></span><br><span class="line"><span class="attribute">author</span>: <span class="string">昵称</span></span><br><span class="line"><span class="attribute">avatar</span>: <span class="string">头像 (如:/images/avatar.jpg, images目录位于source目录下)</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h2 id="Step_5_Github_的操作">Step 5 Github 的操作</h2><ul>
-<li>新建仓库名为 <strong>github用户名.github.io</strong><br>进入仓库，点击右侧 settings，在 Github Pages 标签下可看到  <em>Your site is published at <a href="http://你的用户名.github.io" target="_blank" rel="external">http://你的用户名.github.io</a>.</em> 这句话。 这时便可直接访问，如我的就是 <a href="http://kiya-z.github.io">kiya-z.github.io</a>.</li>
-</ul>
-<hr>
-<h2 id="Step_6_将博客部署到Github">Step 6 将博客部署到Github</h2><ul>
-<li><p>安装 hexo 关于 git 的组件</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="operator"><span class="keyword">install</span> hexo-deployer-git <span class="comment">--save</span></span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在_config.yml 中为 git 添加配置</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">deploy</span>:</span><br><span class="line">    <span class="attribute">type</span>: git</span><br><span class="line">    <span class="attribute">repository</span>: 你的仓库地址(<span class="attribute">https</span>:<span class="comment">//github.com/用户名/用户名.github.io.git)</span></span><br><span class="line">    <span class="attribute">branch</span>: master</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行(每次修改都要执行这些命令才能在github pages看到效果)</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">hexo</span> generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>输入 github 的用户名和密码，部署完成之后访问你的如 <a href="http://kiya-z.github.io">kiya-z.github.io</a> 的网址即可看到和本地一样的效果。</p>
-<hr>
-<h2 id="Step_7_关于写博客">Step 7 关于写博客</h2><ul>
-<li><p>新建博客</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo <span class="keyword">new</span> <span class="string">"文章名"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>使用编辑器写好文章后执行生成+部署(那两个～)</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">hexo</span> generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>删除文章<br>直接删掉 <em>source/_post</em> 下对应文章的文件，然后重新生成+部署即可。有时可能要多刷新几次才能看到效果。</p>
-</li>
-</ul>
-<hr>
-<h2 id="Step_8_评论系统">Step 8 评论系统</h2><ul>
-<li>登录 <a href="http://duoshuo.com/" target="_blank" rel="external">http://duoshuo.com/</a> 点击我要安装，创建站点。站点地址是 Github Pages 的地址，多说域名自己填写。</li>
-<li>由于 NexT 主题已经支持了多说，我们不需要添加其他代码，只需要在 <strong>_config.yml</strong> 中添加一个名为 <strong>duoshuo_shortname</strong> 的字段，其值为<strong>多说域名中自己填写的那部分</strong>，并不是全部多说域名。</li>
-</ul>
-<hr>
-<blockquote>
-<p>结语：欢迎指正交流。Aha～</p>
-</blockquote>
+<h2 id="执行_smali_程序">执行 smali 程序</h2><p>打开 <code>adb</code> 环境，连上手机，在命令行下<br>执行 <code>adb devices</code> 查看手机是否连接成功；<br>执行 <code>adb push FirstSmali.dex /sdcard/</code> 将 dex 文件推到手机上；<br>执行如下命令就 OK 了。<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell dalvikvm -cp /sdcard/FirstSmali<span class="class">.dex</span> FirstSmali</span><br></pre></td></tr></table></figure></p>
+<h3 id="备注">备注</h3><p><code>-cp</code> 是 <code>classpath</code>  的意思，<code>dalvikvm</code> 命令第一个参数指定类路径，第二个指定类名。</p>
+<p>另外，如果想要 push 到如 <code>data/local</code> 之类的目录下是没有权限的，可以先 push 到 sdcard，进入 <code>adb shell</code> 执行 <code>su</code> 获得 root 权限之后，就可以复制到 <code>data</code> 目录了。</p>
+<p>本文程序只有一个 dex 文件，多个的话需要打包为 <code>zip</code> ，将此 zip 文件作为 <code>dalvikvm</code> 的第一个参数便可。</p>
 </span>
       
     </div>
@@ -385,9 +303,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Github/" rel="tag">#Github</a>
+            <a href="/tags/Android-安全/" rel="tag">#Android 安全</a>
           
-            <a href="/tags/Hexo/" rel="tag">#Hexo</a>
+            <a href="/tags/smali/" rel="tag">#smali</a>
+          
+            <a href="/tags/反编译/" rel="tag">#反编译</a>
           
         </div>
       
@@ -398,17 +318,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/11/09/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2015/11/12/check-signature-for-avoiding-fake-app-java-level-check/" rel="next" title="校验数字签名防止 apk 被二次打包 - Java层校验（大众点评为例）">
+                <i class="fa fa-chevron-left"></i> 校验数字签名防止 apk 被二次打包 - Java层校验（大众点评为例）
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/11/11/Python-a-murder-about-interface-and-polymorphism/" rel="prev" title="Python 之 接口和多态引发的血案">
-                Python 之 接口和多态引发的血案 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -433,8 +349,8 @@
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2015/11/10/use-Github-Pages-Hexo-duoshuo-to-set-up-a-blog-basic-steps/"
-                   data-title="使用 Github Pages + Hexo + 多说 搭建博客全过程 - 基础篇" data-url="http://kiya-z.github.io/2015/11/10/use-Github-Pages-Hexo-duoshuo-to-set-up-a-blog-basic-steps/">
+              <div class="ds-thread" data-thread-key="2015/11/16/how-to-run-file-ended-with-smali/"
+                   data-title="如何运行 .smali 程序" data-url="http://kiya-z.github.io/2015/11/16/how-to-run-file-ended-with-smali/">
               </div>
             
           </div>
@@ -553,7 +469,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Step_1_安装_Node-js"><span class="nav-number">1.</span> <span class="nav-text">Step 1 安装 Node.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step_2_安装_Hexo"><span class="nav-number">2.</span> <span class="nav-text">Step 2 安装 Hexo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step_3_搭建本地博客"><span class="nav-number">3.</span> <span class="nav-text">Step 3 搭建本地博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step_4_主题和配置"><span class="nav-number">4.</span> <span class="nav-text">Step 4 主题和配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step_5_Github_的操作"><span class="nav-number">5.</span> <span class="nav-text">Step 5 Github 的操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step_6_将博客部署到Github"><span class="nav-number">6.</span> <span class="nav-text">Step 6 将博客部署到Github</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step_7_关于写博客"><span class="nav-number">7.</span> <span class="nav-text">Step 7 关于写博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step_8_评论系统"><span class="nav-number">8.</span> <span class="nav-text">Step 8 评论系统</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#准备_smali_程序"><span class="nav-number">1.</span> <span class="nav-text">准备 smali 程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译_smali_程序"><span class="nav-number">2.</span> <span class="nav-text">编译 smali 程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行_smali_程序"><span class="nav-number">3.</span> <span class="nav-text">执行 smali 程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#备注"><span class="nav-number">3.1.</span> <span class="nav-text">备注</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>

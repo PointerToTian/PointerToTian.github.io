@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-13T06:30:44.322Z</updated>
+  <updated>2015-11-16T09:29:57.017Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -13,6 +13,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[如何运行 .smali 程序]]></title>
+    <link href="http://kiya-z.github.io/2015/11/16/how-to-run-file-ended-with-smali/"/>
+    <id>http://kiya-z.github.io/2015/11/16/how-to-run-file-ended-with-smali/</id>
+    <published>2015-11-16T09:27:19.000Z</published>
+    <updated>2015-11-16T09:29:57.017Z</updated>
+    <content type="html"><![CDATA[<h2 id="准备_smali_程序">准备 smali 程序</h2><a id="more"></a>
+<p>从 《Android 软件安全与逆向》书中抠出一段，起名为 <code>FirstSmali.smali</code> ：<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.class</span><span class="keyword"> public</span> <span class="class">LFirstSmali;</span>  <span class="comment"># 定义类名</span></span><br><span class="line"><span class="keyword">.super</span> <span class="class">Ljava/lang/Object;</span>   <span class="comment"># 定义父类</span></span><br><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span><span class="function"> main(</span><span class="keyword">[</span><span class="class">Ljava/lang/String;</span><span class="function">)</span>V     <span class="comment"># 声明静态方法</span></span><br><span class="line"><span class="keyword">    .registers</span> 4     <span class="comment"># 寄存器</span></span><br><span class="line">    <span class="comment">#.parameter      # 参数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">    .prologue</span>      <span class="comment"># 代码起始</span></span><br><span class="line">   <span class="instruction"> nop</span><br><span class="line"></span>   <span class="instruction"> nop</span><br><span class="line"></span>   <span class="instruction"> nop</span><br><span class="line"></span>   <span class="instruction"> nop</span><br><span class="line"></span>    <span class="comment">#数据定义</span></span><br><span class="line">   <span class="instruction"> const/16 </span><span class="variable">v0</span>,0x8</span><br><span class="line">   <span class="instruction"> const/4 </span><span class="variable">v1</span>,0x5</span><br><span class="line">   <span class="instruction"> const/4 </span><span class="variable">v2</span>,0x3</span><br><span class="line">    <span class="comment">#数据操作</span></span><br><span class="line">   <span class="instruction"> move </span><span class="variable">v1</span>,<span class="variable">v2</span></span><br><span class="line">    <span class="comment">#数组操作</span></span><br><span class="line">   <span class="instruction"> new-array </span><span class="variable">v0</span>,<span class="variable">v0</span>,<span class="keyword">[</span>I</span><br><span class="line">   <span class="instruction"> array-length </span><span class="variable">v1</span>,<span class="variable">v0</span></span><br><span class="line">    <span class="comment">#实例操作</span></span><br><span class="line">   <span class="instruction"> new-instance </span><span class="variable">v1</span>,<span class="class">Ljava/lang/StringBuilder;</span></span><br><span class="line">    <span class="comment">#方法调用</span></span><br><span class="line">   <span class="instruction"> invoke-direct </span>&#123;<span class="variable">v1</span>&#125;,<span class="class">Ljava/lang/StringBuilder;</span><span class="function">-&gt;&lt;init&gt;(</span><span class="function">)</span>V</span><br><span class="line">    <span class="comment">#跳转</span></span><br><span class="line">   <span class="instruction"> if-nez </span><span class="variable">v0</span>,<span class="keyword"> :cond_0</span></span><br><span class="line">   <span class="instruction"> goto </span>:goto_0</span><br><span class="line">   <span class="keyword"> :cond_0</span></span><br><span class="line">    <span class="comment">#数据转换</span></span><br><span class="line">   <span class="instruction"> int-to-float </span><span class="variable">v2</span>,<span class="variable">v2</span></span><br><span class="line">    <span class="comment">#运算</span></span><br><span class="line">   <span class="instruction"> add-float </span><span class="variable">v2</span>,<span class="variable">v2</span>,<span class="variable">v2</span></span><br><span class="line">    <span class="comment">#比较</span></span><br><span class="line">   <span class="instruction"> cmpl-float </span><span class="variable">v0</span>,<span class="variable">v2</span>,<span class="variable">v2</span></span><br><span class="line">    <span class="comment">#字段操作</span></span><br><span class="line">   <span class="instruction"> sget-object </span><span class="variable">v0</span>,<span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></span><br><span class="line">   <span class="instruction"> const-string </span><span class="variable">v1</span>,<span class="string">"Hello Smali"</span></span><br><span class="line">    <span class="comment">#调用</span></span><br><span class="line">   <span class="instruction"> invoke-virtual </span>&#123;<span class="variable">v0</span>,<span class="variable">v1</span>&#125;, <span class="class">Ljava/io/PrintStream;</span><span class="function">-&gt;println(</span><span class="class">Ljava/lang/String;</span><span class="function">)</span>V</span><br><span class="line">    <span class="comment">#返回</span></span><br><span class="line">   <span class="keyword"> :goto_0</span></span><br><span class="line">   <span class="instruction"> return-void</span><br><span class="line"></span>   <span class="instruction"> return-void </span>    <span class="comment"># 返回空</span><span class="keyword"></span><br><span class="line"></span><br><span class="line">.end method</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="编译_smali_程序">编译 smali 程序</h2><p>将 <code>.smali</code> 文件编译为 <code>.dex</code> 文件 :<br><code>java -jar smali.jar -o FirstSmali.dex FirstSmali.smali</code></p>
+<hr>
+<h2 id="执行_smali_程序">执行 smali 程序</h2><p>打开 <code>adb</code> 环境，连上手机，在命令行下<br>执行 <code>adb devices</code> 查看手机是否连接成功；<br>执行 <code>adb push FirstSmali.dex /sdcard/</code> 将 dex 文件推到手机上；<br>执行如下命令就 OK 了。<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell dalvikvm -cp /sdcard/FirstSmali<span class="class">.dex</span> FirstSmali</span><br></pre></td></tr></table></figure></p>
+<h3 id="备注">备注</h3><p><code>-cp</code> 是 <code>classpath</code>  的意思，<code>dalvikvm</code> 命令第一个参数指定类路径，第二个指定类名。</p>
+<p>另外，如果想要 push 到如 <code>data/local</code> 之类的目录下是没有权限的，可以先 push 到 sdcard，进入 <code>adb shell</code> 执行 <code>su</code> 获得 root 权限之后，就可以复制到 <code>data</code> 目录了。</p>
+<p>本文程序只有一个 dex 文件，多个的话需要打包为 <code>zip</code> ，将此 zip 文件作为 <code>dalvikvm</code> 的第一个参数便可。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="准备_smali_程序">准备 smali 程序</h2>]]>
+    
+    </summary>
+    
+      <category term="Android 安全" scheme="http://kiya-z.github.io/tags/Android-%E5%AE%89%E5%85%A8/"/>
+    
+      <category term="smali" scheme="http://kiya-z.github.io/tags/smali/"/>
+    
+      <category term="反编译" scheme="http://kiya-z.github.io/tags/%E5%8F%8D%E7%BC%96%E8%AF%91/"/>
+    
+      <category term="Android" scheme="http://kiya-z.github.io/categories/Android/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[校验数字签名防止 apk 被二次打包 - Java层校验（大众点评为例）]]></title>
@@ -80,7 +111,7 @@
     <link href="http://kiya-z.github.io/2015/11/12/Android-security-tools/"/>
     <id>http://kiya-z.github.io/2015/11/12/Android-security-tools/</id>
     <published>2015-11-12T08:09:27.000Z</published>
-    <updated>2015-11-12T08:24:52.018Z</updated>
+    <updated>2015-11-16T09:29:27.697Z</updated>
     <content type="html"><![CDATA[<blockquote>
 <p><strong>工具清单</strong></p>
 <ul>
@@ -95,6 +126,9 @@
 <p>以上工具可点击 <a href="https://github.com/kiya-z/Android/tree/master/tools" target="_blank" rel="external">这里</a> 打包下载</p>
 <p><strong>本文环境：<code>Ubuntu 14.04.3 LTS 64-bit</code></strong></p>
 <a id="more"></a>
+<hr>
+<p>###工具使用场景：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java-&#62;class: javac&#10;smali-&#62;dex: smali.jar&#10;class-&#62;dex: dx&#10;&#10;dex-&#62;smali: baksmali&#10;dex-&#62;class: dex2jar&#10;class-&#62;java: JD-GUI</span><br></pre></td></tr></table></figure>
 <hr>
 <h1 id="Apktool"><strong>Apktool</strong></h1><p>点击 <a href="http://ibotpeaches.github.io/Apktool/install/" target="_blank" rel="external">官网</a> 下载，里面也有详细的安装步骤。</p>
 <h3 id="中文步骤及注意事项">中文步骤及注意事项</h3><p>（<em>此处为 Apktool 2.x 版本</em>）</p>
@@ -143,6 +177,8 @@
     </summary>
     
       <category term="Android 安全" scheme="http://kiya-z.github.io/tags/Android-%E5%AE%89%E5%85%A8/"/>
+    
+      <category term="反编译" scheme="http://kiya-z.github.io/tags/%E5%8F%8D%E7%BC%96%E8%AF%91/"/>
     
       <category term="工具" scheme="http://kiya-z.github.io/tags/%E5%B7%A5%E5%85%B7/"/>
     
