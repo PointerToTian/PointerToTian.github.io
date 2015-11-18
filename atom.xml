@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-17T17:23:19.793Z</updated>
+  <updated>2015-11-18T06:27:03.778Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/"/>
     <id>http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/</id>
     <published>2015-11-17T14:32:58.000Z</published>
-    <updated>2015-11-17T17:23:19.793Z</updated>
+    <updated>2015-11-18T06:27:03.778Z</updated>
     <content type="html"><![CDATA[<h3 id="简介">简介</h3><p>dex 文件是 dalvik 虚拟机的可执行文件。</p>
 <a id="more"></a>
 <hr>
@@ -29,33 +29,147 @@
 <h4 id="大体结构图">大体结构图</h4><p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure.png" alt="dex-file-general-structure"></p>
 <hr>
 <h3 id="DexHeader_结构">DexHeader 结构</h3><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> 160-bit SHA-1 digest.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">enum &#123; kSHA1DigestLen = 20,</span><br><span class="line">       kSHA1DigestOutputLen = kSHA1DigestLen<span class="keyword">*</span>2 +1 &#125;;</span><br><span class="line"></span><br><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"header_item"</span> struct.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexHeader &#123;</span><br><span class="line">    u1  magic[8];           /<span class="keyword">*</span> 版本标识 <span class="keyword">*</span>/</span><br><span class="line">    u4  checksum;           /<span class="keyword">*</span> adler32 检验 <span class="keyword">*</span>/</span><br><span class="line">    u1  signature[kSHA1DigestLen]; /<span class="keyword">*</span> SHA-1 哈希值 <span class="keyword">*</span>/</span><br><span class="line">    u4  fileSize;           /<span class="keyword">*</span> 整个文件大小 <span class="keyword">*</span>/</span><br><span class="line">    u4  headerSize;         /<span class="keyword">*</span> DexHeader 大小 <span class="keyword">*</span>/</span><br><span class="line">    u4  endianTag;          /<span class="keyword">*</span> 字节序标记 <span class="keyword">*</span>/</span><br><span class="line">    u4  linkSize;           /<span class="keyword">*</span> 链接段大小 <span class="keyword">*</span>/</span><br><span class="line">    u4  linkOff;            /<span class="keyword">*</span> 链接段偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  mapOff;             /<span class="keyword">*</span> DexMapList 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  stringIdsSize;      /<span class="keyword">*</span> DexStringId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  stringIdsOff;       /<span class="keyword">*</span> DexStringId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  typeIdsSize;        /<span class="keyword">*</span> DexTypeId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  typeIdsOff;         /<span class="keyword">*</span> DexTypeId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  protoIdsSize;       /<span class="keyword">*</span> DexProtoId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  protoIdsOff;        /<span class="keyword">*</span> DexProtoId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  fieldIdsSize;       /<span class="keyword">*</span> DexFieldId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  fieldIdsOff;        /<span class="keyword">*</span> DexFieldId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  methodIdsSize;      /<span class="keyword">*</span> DexMethodId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  methodIdsOff;       /<span class="keyword">*</span> DexMethodId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  classDefsSize;      /<span class="keyword">*</span> DexClassDef 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  classDefsOff;       /<span class="keyword">*</span> DexClassDef 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  dataSize;           /<span class="keyword">*</span> 数据段的大小 <span class="keyword">*</span>/</span><br><span class="line">    u4  dataOff;            /<span class="keyword">*</span> 数据段的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h4 id="其中：">其中：</h4><p><strong>magic</strong> ： dex文件标识，值必须为常量 <code>DEX_FILE_MAGIC</code>；</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ubyte[<span class="number">8</span>] DEX_FILE_MAGIC = &#123; <span class="number">0x64</span> <span class="number">0x65</span> <span class="number">0x78</span> <span class="number">0x0a</span> <span class="number">0x30</span> <span class="number">0x33</span> <span class="number">0x35</span> <span class="number">0x00</span> &#125;</span><br><span class="line">                        = <span class="string">"dex\n035\0"</span></span><br></pre></td></tr></table></figure>
-<p><strong>checkSum</strong> ： 对除 magic 和 checkSum 外的剩余文件计算 adler32 校验值，目的是检测文件是否损坏；</p>
-<p><strong>signature</strong>：对除 magic、checkSum 和 signature 外的剩余文件计算 SHA-1 校验值，用来确定文件的唯一性</p>
-<p><strong>fileSize</strong>：以字节为单位，整个文件（包括头部）的大小；</p>
-<p><strong>headerSize</strong>：头部大小，0x70 字节，已经考虑到兼容性；</p>
-<p><strong>endianTag</strong>：两种字节序取值；</p>
-<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uint ENDIAN_CONSTANT = <span class="number">0x12345678</span><span class="comment">;</span></span><br><span class="line">uint REVERSE_ENDIAN_CONSTANT = <span class="number">0x78563412</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p><strong>linkSize</strong>：链接段的大小，如果没有使用静态链接，值为0；</p>
-<p><strong>linkOff</strong>：链接段的文件偏移，指向链接数据段内，如果 <code>linkSize</code> 为 0，则为 0；</p>
-<p><strong>mapOff</strong>：map item 的文件偏移，指向数据段内，数据结构为 <code>mapList</code>，如果没有 map，值为 0；</p>
-<p><strong>stringIdsSize</strong>：字符串 id 的个数；</p>
-<p><strong>stringIdsOff</strong>：字符串 id 清单的文件偏移，指向 <code>stringIds</code> 的起始地址，如果 stringIdsSize 为 0，值为0；</p>
-<p><strong>typeIdsSize</strong>：类型标识符的个数；</p>
-<p><strong>typeIdsOff</strong>：类型标识符清单的文件偏移，指向 <code>typeIds</code> 的起始地址，如果 typeIdsSize 为 0，值为 0 (<em>这就很奇怪了哟</em>)；</p>
-<p><strong>protoIdsSize</strong>：原型标识符的个数；</p>
-<p><strong>protoIdsOff</strong>：原型标识符清单的文件偏移，指向 <code>protoIds</code> 的起始地址，如果 protoIdsSize 为 0，值为 0 (<em>这就很奇怪了哟</em>)；</p>
-<p><strong> fieldIdsSize</strong>：字段标识符的个数；</p>
-<p><strong>fieldIdsOff</strong>：字段标识符清单的文件偏移，指向 <code>fieldIds</code> 的起始地址，如果 fieldIdsSize 为 0，值为 0；</p>
-<p><strong>methodIdsSize</strong>：方法标识符的个数；</p>
-<p><strong>methodIdsOff</strong>：方法标识符清单的文件偏移，指向 <code>methodIds</code> 的起始地址，如果 methodIdsSize 为 0，值为 0；</p>
-<p><strong>classDefsSize</strong>：类的个数；</p>
-<p><strong>classDefsOff</strong>：类清单的文件偏移，指向 <code>classDefs</code> 的起始地址，如果 classDefsSize 为 0，值为 0 (<em>这就很奇怪了哟</em>)；</p>
-<p><strong>dataSize</strong>：数据段的大小，以字节为单位，并且是 sizeof(uint) 的偶数倍；</p>
-<p><strong>dataOff</strong>：数据段的文件偏移。</p>
+<h4 id="其中：">其中：</h4><table>
+<thead>
+<tr>
+<th>field</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>magic</strong></td>
+<td>dex文件标识，值必须为常量 <code>DEX_FILE_MAGIC</code> = { 0x64 0x65 0x78 0x0a 0x30 0x33 0x35 0x00 } = “dex\n035\0”</td>
+</tr>
+<tr>
+<td><strong>checkSum</strong></td>
+<td>对除 magic 和 checkSum 外的剩余文件计算 adler32 校验值，目的是检测文件是否损坏</td>
+</tr>
+<tr>
+<td><strong> signature</strong></td>
+<td>对除 magic、checkSum 和 signature 外的剩余文件计算 SHA-1 校验值，用来确定文件的唯一性</td>
+</tr>
+<tr>
+<td><strong> fileSize</strong></td>
+<td>以字节为单位，整个文件（包括头部）的大小</td>
+</tr>
+<tr>
+<td><strong> headerSize</strong></td>
+<td>头部大小，0x70 字节，已经考虑到兼容性</td>
+</tr>
+<tr>
+<td><strong> endianTag</strong></td>
+<td>两种字节序取值: uint ENDIAN_CONSTANT = 0x12345678; uint REVERSE_ENDIAN_CONSTANT = 0x78563412</td>
+</tr>
+<tr>
+<td><strong> linkSize</strong></td>
+<td>链接段的大小，如果没有使用静态链接，值为0</td>
+</tr>
+<tr>
+<td><strong> linkOff</strong></td>
+<td>链接段的文件偏移，指向链接数据段内，如果 <code>linkSize</code> 为 0，则为 0</td>
+</tr>
+<tr>
+<td><strong> mapOff</strong></td>
+<td>map item 的文件偏移，指向数据段内，数据结构为 <code>mapList</code>，如果没有 map，值为 0</td>
+</tr>
+<tr>
+<td><strong> stringIdsSize</strong></td>
+<td>字符串 id 的个数</td>
+</tr>
+<tr>
+<td><strong> stringIdsOff</strong></td>
+<td>字符串 id 清单的文件偏移，指向 <code>stringIds</code> 的起始地址，如果 stringIdsSize 为 0，值为0</td>
+</tr>
+<tr>
+<td><strong> typeIdsSize</strong></td>
+<td>类型标识符的个数</td>
+</tr>
+<tr>
+<td><strong> typeIdsOff</strong></td>
+<td>类型标识符清单的文件偏移，指向 <code>typeIds</code> 的起始地址，如果 typeIdsSize 为 0，值为 0 (<em>这就很奇怪了哟</em>)</td>
+</tr>
+<tr>
+<td><strong> protoIdsSize</strong></td>
+<td>原型标识符的个数</td>
+</tr>
+<tr>
+<td><strong> protoIdsOff</strong></td>
+<td>原型标识符清单的文件偏移，指向 <code>protoIds</code> 的起始地址，如果 protoIdsSize 为 0，值为 0 (<em>这就很奇怪了哟</em>)</td>
+</tr>
+<tr>
+<td><strong>  fieldIdsSize</strong></td>
+<td>字段标识符的个数</td>
+</tr>
+<tr>
+<td><strong> fieldIdsOff</strong></td>
+<td>字段标识符清单的文件偏移，指向 <code>fieldIds</code> 的起始地址，如果 fieldIdsSize 为 0，值为 0</td>
+</tr>
+<tr>
+<td><strong> methodIdsSize</strong></td>
+<td>方法标识符的个数</td>
+</tr>
+<tr>
+<td><strong> methodIdsOff</strong></td>
+<td>方法标识符清单的文件偏移，指向 <code>methodIds</code> 的起始地址，如果 methodIdsSize 为 0，值为 0</td>
+</tr>
+<tr>
+<td><strong> classDefsSize</strong></td>
+<td>类的个数</td>
+</tr>
+<tr>
+<td><strong> classDefsOff</strong></td>
+<td>类清单的文件偏移，指向 <code>classDefs</code> 的起始地址，如果 classDefsSize 为 0，值为 0 (<em>这就很奇怪了哟</em>)</td>
+</tr>
+<tr>
+<td><strong> dataSize</strong></td>
+<td>数据段的大小，以字节为单位，并且是 sizeof(uint) 的偶数倍</td>
+</tr>
+<tr>
+<td><strong> dataOff</strong></td>
+<td>数据段的文件偏移</td>
+</tr>
+</tbody>
+</table>
 <hr>
-<h3 id="手工查找">手工查找</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000</span>  <span class="number">64</span> <span class="number">65</span> <span class="number">78</span> <span class="number">0</span>a <span class="number">30</span> <span class="number">33</span> <span class="number">35</span> <span class="number">00</span>  <span class="number">3</span>b ba fe c3 <span class="number">83</span> <span class="number">7</span>e aa be  |dex<span class="number">.035</span>.;....~..|</span><br><span class="line"><span class="number">00000010</span>  <span class="number">09</span> <span class="number">97</span> <span class="number">71</span> <span class="number">1</span>e <span class="number">17</span> <span class="number">96</span> <span class="number">9f</span> e9  <span class="number">0</span>c bd <span class="number">01</span> <span class="number">60</span> b4 <span class="number">2</span>a <span class="number">1</span>a c9  |..q........`.*..|</span><br><span class="line"><span class="number">00000020</span>  c4 <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">70</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">78</span> <span class="number">56</span> <span class="number">34</span> <span class="number">12</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |....p...xV4.....|</span><br><span class="line"><span class="number">00000030</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">5</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">70</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |........\...p...|</span><br><span class="line"><span class="number">00000040</span>  <span class="number">19</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> e0 <span class="number">01</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">12</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">44</span> <span class="number">02</span> <span class="number">00</span> <span class="number">00</span>  |............D...|</span><br><span class="line"><span class="number">00000050</span>  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>c <span class="number">03</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">2</span>b <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">24</span> <span class="number">03</span> <span class="number">00</span> <span class="number">00</span>  |........+...$...|</span><br><span class="line"><span class="number">00000060</span>  <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">7</span>c <span class="number">04</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">08</span> <span class="number">0</span>c <span class="number">00</span> <span class="number">00</span> bc <span class="number">04</span> <span class="number">00</span> <span class="number">00</span>  |....|...........|</span><br></pre></td></tr></table></figure>
+<h3 id="手工查找">手工查找</h3><p>linux 下可以使用 <code>hexdump</code> 查看某文件的二进制数据 -&gt; <code>hexdump -C classes.dex</code></p>
+<p><a href="http://archive.oreilly.com/linux/cmd/cmd.csp?path=h/hexdump" target="_blank" rel="external">常用选项</a></p>
+<table>
+<thead>
+<tr>
+<th>option</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-b</td>
+<td>将每个字节显示为8进制</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>将每个字节显示为ASCII字符</td>
+</tr>
+<tr>
+<td>-C</td>
+<td>每个字节显示为16进制和相应的ASCII字符</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>每两个字节显示为10进制</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>每两个字节显示为8进制</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>每两个字节显示为16进制</td>
+</tr>
+</tbody>
+</table>
+<p><strong>某 dex 文件的头部：</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000000</span>  <span class="number">64</span> <span class="number">65</span> <span class="number">78</span> <span class="number">0</span>a <span class="number">30</span> <span class="number">33</span> <span class="number">35</span> <span class="number">00</span>  <span class="number">3</span>b ba fe c3 <span class="number">83</span> <span class="number">7</span>e aa be  |dex<span class="number">.035</span>.;....~..|</span><br><span class="line"><span class="number">00000010</span>  <span class="number">09</span> <span class="number">97</span> <span class="number">71</span> <span class="number">1</span>e <span class="number">17</span> <span class="number">96</span> <span class="number">9f</span> e9  <span class="number">0</span>c bd <span class="number">01</span> <span class="number">60</span> b4 <span class="number">2</span>a <span class="number">1</span>a c9  |..q........`.*..|</span><br><span class="line"><span class="number">00000020</span>  c4 <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">70</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">78</span> <span class="number">56</span> <span class="number">34</span> <span class="number">12</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |....p...xV4.....|</span><br><span class="line"><span class="number">00000030</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">5</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">70</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |........\...p...|</span><br><span class="line"><span class="number">00000040</span>  <span class="number">19</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> e0 <span class="number">01</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">12</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">44</span> <span class="number">02</span> <span class="number">00</span> <span class="number">00</span>  |............D...|</span><br><span class="line"><span class="number">00000050</span>  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>c <span class="number">03</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">2</span>b <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">24</span> <span class="number">03</span> <span class="number">00</span> <span class="number">00</span>  |........+...$...|</span><br><span class="line"><span class="number">00000060</span>  <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">7</span>c <span class="number">04</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">08</span> <span class="number">0</span>c <span class="number">00</span> <span class="number">00</span> bc <span class="number">04</span> <span class="number">00</span> <span class="number">00</span>  |....|...........|</span><br></pre></td></tr></table></figure>
 <table>
 <thead>
 <tr>
