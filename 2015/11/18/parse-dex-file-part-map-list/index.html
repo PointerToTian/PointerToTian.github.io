@@ -1,0 +1,896 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+<link rel="stylesheet" type="text/css" href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" />
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.2"/>
+
+
+    <meta name="description" content="Stupid Girl." />
+
+
+
+  <meta name="keywords" content="Android 安全,dex," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="kiya's pigsty" type="application/atom+xml" />
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+<meta name="description" content="什么是 map_list？整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="解析 dex 文件结构 - map_list">
+<meta property="og:url" content="http://kiya-z.github.io/2015/11/18/parse-dex-file-part-map-list/index.html">
+<meta property="og:site_name" content="kiya's pigsty">
+<meta property="og:description" content="什么是 map_list？整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。">
+<meta property="og:updated_time" content="2015-11-18T09:07:14.510Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="解析 dex 文件结构 - map_list">
+<meta name="twitter:description" content="什么是 map_list？整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+
+
+  <title> 解析 dex 文件结构 - map_list | kiya's pigsty </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?4b44b74c1d52dddc6ae8ca77358b0b6c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">kiya's pigsty</span>
+      <span class="logo-line-after"><i></i></span>
+
+    </a>
+  </div>
+  <p class="site-subtitle">No Further Delay!</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+  
+    
+
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                解析 dex 文件结构 - map_list
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-11-18T17:06:28+08:00" content="2015-11-18">
+              2015-11-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/11/18/parse-dex-file-part-map-list/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/18/parse-dex-file-part-map-list/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+
+              <span id="busuanzi_container_page_pv">
+                  &nbsp; | &nbsp;
+                  <span id="busuanzi_value_page_pv"></span>&nbsp; Hits
+              </span>
+
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body">
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="什么是_map_list？">什么是 map_list？</h2><p>整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。</p>
+<a id="more"></a>
+<p>更加具体的解释在下面的 type 段落部分。</p>
+<hr>
+<h2 id="结构">结构</h2><p>来到 mapOff 指定的偏移处，首先是 DexMapList 结构，存储了 map_list 内 map_item (DexMapItem) 的个数和内容，也就是说在 size 之后，有 size 个DexMapItem 类型的数据。</p>
+<h3 id="DexMapList">DexMapList</h3><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"map_list"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexMapList &#123;</span><br><span class="line">    u4  size;               /<span class="keyword">*</span> DexMapItem 的个数 <span class="keyword">*</span>/</span><br><span class="line">    DexMapItem list[1];     /<span class="keyword">*</span> DexMapItem 数组 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="DexMapItem">DexMapItem</h3><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"map_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexMapItem &#123;</span><br><span class="line">    u2 type;              /<span class="keyword">*</span> 各 item 的类型，均以 kDexType 开头<span class="keyword">*</span>/</span><br><span class="line">    u2 unused;            /<span class="keyword">*</span> 未使用，用于字节对齐 <span class="keyword">*</span>/</span><br><span class="line">    u4 size;              /<span class="keyword">*</span> 指定类型的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4 offset;            /<span class="keyword">*</span> 指定类型数据的起始文件偏移 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="type">type</h3><p>在这些类型中，除了 0x0000 表示的就是 DexHeader 本身之外，0x0001 ~ 0x1000 部分与 DexHeader 中定义的类型是一致的；<br>而 0x1001 ~ 0x2006 部分是对 data 段的细分。<br>这样设计可以作为一种文件检验方式，一旦和 DexHeader 的数据有所不同就可以判定该 dex 是损坏的；而且 map_list 部分的内容更详细，以此作为整个文件的索引想必是极好的。<br>下面手动查找的例子可以证明。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* map item type codes */</span></span><br><span class="line"><span class="keyword">enum</span> &#123;</span><br><span class="line">    kDexTypeHeaderItem               = <span class="number">0x0000</span>,</span><br><span class="line">    kDexTypeStringIdItem             = <span class="number">0x0001</span>,</span><br><span class="line">    kDexTypeTypeIdItem               = <span class="number">0x0002</span>,</span><br><span class="line">    kDexTypeProtoIdItem              = <span class="number">0x0003</span>,</span><br><span class="line">    kDexTypeFieldIdItem              = <span class="number">0x0004</span>,</span><br><span class="line">    kDexTypeMethodIdItem             = <span class="number">0x0005</span>,</span><br><span class="line">    kDexTypeClassDefItem             = <span class="number">0x0006</span>,</span><br><span class="line">    kDexTypeMapList                  = <span class="number">0x1000</span>,</span><br><span class="line">    kDexTypeTypeList                 = <span class="number">0x1001</span>,</span><br><span class="line">    kDexTypeAnnotationSetRefList     = <span class="number">0x1002</span>,</span><br><span class="line">    kDexTypeAnnotationSetItem        = <span class="number">0x1003</span>,</span><br><span class="line">    kDexTypeClassDataItem            = <span class="number">0x2000</span>,</span><br><span class="line">    kDexTypeCodeItem                 = <span class="number">0x2001</span>,</span><br><span class="line">    kDexTypeStringDataItem           = <span class="number">0x2002</span>,</span><br><span class="line">    kDexTypeDebugInfoItem            = <span class="number">0x2003</span>,</span><br><span class="line">    kDexTypeAnnotationItem           = <span class="number">0x2004</span>,</span><br><span class="line">    kDexTypeEncodedArrayItem         = <span class="number">0x2005</span>,</span><br><span class="line">    kDexTypeAnnotationsDirectoryItem = <span class="number">0x2006</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="手工查找">手工查找</h2><p><strong>某 dex 文件的 map_list 部分</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00001000</span>  <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00001010</span>  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">5</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">70</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |....\...p.......|</span><br><span class="line"><span class="number">00001020</span>  <span class="number">19</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> e0 <span class="number">01</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">12</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00001030</span>  <span class="number">44</span> <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">04</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>c <span class="number">03</span> <span class="number">00</span> <span class="number">00</span>  |D...............|</span><br><span class="line"><span class="number">00001040</span>  <span class="number">05</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">2</span>b <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">24</span> <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">06</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |....+...$.......|</span><br><span class="line"><span class="number">00001050</span>  <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">7</span>c <span class="number">04</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">02</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span> <span class="number">5</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |....|.... ..\...|</span><br><span class="line"><span class="number">00001060</span>  bc <span class="number">04</span> <span class="number">00</span> <span class="number">00</span> <span class="number">01</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> f8 <span class="number">09</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00001070</span>  <span class="number">04</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">4</span>e <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">03</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span>  |. ......N.......|</span><br><span class="line"><span class="number">00001080</span>  <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">58</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span>  <span class="number">06</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |....X.... ......|</span><br><span class="line"><span class="number">00001090</span>  <span class="number">64</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">03</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">09</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">7</span>c <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span>  |d.... ......|...|</span><br><span class="line"><span class="number">000010</span>a0  <span class="number">01</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span> <span class="number">09</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">10</span> <span class="number">0</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span>  |. ........... ..|</span><br><span class="line"><span class="number">000010</span>b0  <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> c2 <span class="number">0f</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">000010</span>c0  <span class="number">00</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span>                                       |....|</span><br></pre></td></tr></table></figure>
+<p>前 4 字节表明接下来会有 <code>0x00000010</code> 个 DexMapItem 结构；</p>
+<table>
+<thead>
+<tr>
+<th>序数</th>
+<th>binary</th>
+<th>type</th>
+<th>size</th>
+<th>offset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x01</td>
+<td>00 00 00 00  01 00 00 00  00 00 00 00</td>
+<td>kDexTypeHeaderItem</td>
+<td>0x01</td>
+<td>0x0</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>01 00 00 00  5c 00 00 00  70 00 00 00</td>
+<td>kDexTypeStringIdItem</td>
+<td>0x5c</td>
+<td>0x70</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>02 00 00 00  19 00 00 00  e0 01 00 00</td>
+<td>kDexTypeTypeIdItem</td>
+<td>0x19</td>
+<td>0x1e0</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>03 00 00 00  12 00 00 00  44 02 00 00</td>
+<td>kDexTypeProtoIdItem</td>
+<td>0x12</td>
+<td>0x244</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>04 00 00 00  01 00 00 00  1c 03 00 00</td>
+<td>kDexTypeFieldIdItem</td>
+<td>0x01</td>
+<td>0x3c1</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>05 00 00 00  2b 00 00 00  24 03 00 00</td>
+<td>kDexTypeMethodIdItem</td>
+<td>0x2b</td>
+<td>0x324</td>
+</tr>
+<tr>
+<td>0x07</td>
+<td>06 00 00 00  02 00 00 00  7c 04 00 00</td>
+<td>kDexTypeClassDefItem</td>
+<td>0x02</td>
+<td>0x47c</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>02 20 00 00  5c 00 00 00  bc 04 00 00</td>
+<td>kDexTypeStringDataItem</td>
+<td>0x5c</td>
+<td>0x4bc</td>
+</tr>
+<tr>
+<td>0x09</td>
+<td>01 10 00 00  0a 00 00 00  f8 09 00 00</td>
+<td>kDexTypeTypeList</td>
+<td>0x0a</td>
+<td>0x9f8</td>
+</tr>
+<tr>
+<td>0x0a</td>
+<td>04 20 00 00  01 00 00 00  4e 0a 00 00</td>
+<td>kDexTypeAnnotationItem</td>
+<td>0x01</td>
+<td>0xa4e</td>
+</tr>
+<tr>
+<td>0x0b</td>
+<td>03 10 00 00  02 00 00 00  58 0a 00 00</td>
+<td>kDexTypeAnnotationSetItem</td>
+<td>0x02</td>
+<td>0xa58</td>
+</tr>
+<tr>
+<td>0x0c</td>
+<td>06 20 00 00  01 00 00 00  64 0a 00 00</td>
+<td>kDexTypeAnnotationsDirectoryItem</td>
+<td>0x01</td>
+<td>0xa64</td>
+</tr>
+<tr>
+<td>0x0d</td>
+<td>03 20 00 00  09 00 00 00  7c 0a 00 00</td>
+<td>kDexTypeDebugInfoItem</td>
+<td>0x09</td>
+<td>0xa7c</td>
+</tr>
+<tr>
+<td>0x0e</td>
+<td>01 20 00 00  09 00 00 00  10 0c 00 00</td>
+<td>kDexTypeCodeItem</td>
+<td>0x09</td>
+<td>0xc10</td>
+</tr>
+<tr>
+<td>0x0f</td>
+<td>00 20 00 00  02 00 00 00  c2 0f 00 00</td>
+<td>kDexTypeClassDataItem</td>
+<td>0x02</td>
+<td>0xfc2</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>00 10 00 00  01 00 00 00  00 10 00 00</td>
+<td>kDexTypeMapList</td>
+<td>0x01</td>
+<td>0x1000</td>
+</tr>
+</tbody>
+</table>
+<p>这里的各项值可以和上一节 <a href="http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/">解析 dex 文件结构 - DexHeader</a> 手动查找部分中的数据进行比对，发现是相同的。</p>
+<hr>
+<h2 id="写程序解析_map_list">写程序解析 map_list</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DexStruct</span><span class="params">(object)</span>:</span></span><br><span class="line">    DexHeader = &#123;&#125;    <span class="comment"># 实现在上一节</span></span><br><span class="line"></span><br><span class="line">    DexMapList = &#123;</span><br><span class="line">        <span class="string">"size"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="string">"DexMapItem"</span>: []</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># DexMapItem = &#123;</span></span><br><span class="line">    <span class="comment">#     "type" : 0</span></span><br><span class="line">    <span class="comment">#     "unused" : 0</span></span><br><span class="line">    <span class="comment">#     "size"  : 0</span></span><br><span class="line">    <span class="comment">#     "offset" : 0</span></span><br><span class="line">    <span class="comment"># &#125;</span></span><br><span class="line"></span><br><span class="line">    DexMapItemCode = &#123;</span><br><span class="line">        <span class="number">0x0000</span> : <span class="string">"kDexTypeHeaderItem"</span>               ,</span><br><span class="line">        <span class="number">0x0001</span> : <span class="string">"kDexTypeStringIdItem"</span>             ,</span><br><span class="line">        <span class="number">0x0002</span> : <span class="string">"kDexTypeTypeIdItem"</span>               ,</span><br><span class="line">        <span class="number">0x0003</span> : <span class="string">"kDexTypeProtoIdItem"</span>              ,</span><br><span class="line">        <span class="number">0x0004</span> : <span class="string">"kDexTypeFieldIdItem"</span>              ,</span><br><span class="line">        <span class="number">0x0005</span> : <span class="string">"kDexTypeMethodIdItem"</span>             ,</span><br><span class="line">        <span class="number">0x0006</span> : <span class="string">"kDexTypeClassDefItem"</span>             ,</span><br><span class="line">        <span class="number">0x1000</span> : <span class="string">"kDexTypeMapList"</span>                  ,</span><br><span class="line">        <span class="number">0x1001</span> : <span class="string">"kDexTypeTypeList"</span>                 ,</span><br><span class="line">        <span class="number">0x1002</span> : <span class="string">"kDexTypeAnnotationSetRefList"</span>     ,</span><br><span class="line">        <span class="number">0x1003</span> : <span class="string">"kDexTypeAnnotationSetItem"</span>        ,</span><br><span class="line">        <span class="number">0x2000</span> : <span class="string">"kDexTypeClassDataItem"</span>            ,</span><br><span class="line">        <span class="number">0x2001</span> : <span class="string">"kDexTypeCodeItem"</span>                 ,</span><br><span class="line">        <span class="number">0x2002</span> : <span class="string">"kDexTypeStringDataItem"</span>           ,</span><br><span class="line">        <span class="number">0x2003</span> : <span class="string">"kDexTypeDebugInfoItem"</span>            ,</span><br><span class="line">        <span class="number">0x2004</span> : <span class="string">"kDexTypeAnnotationItem"</span>           ,</span><br><span class="line">        <span class="number">0x2005</span> : <span class="string">"kDexTypeEncodedArrayItem"</span>         ,</span><br><span class="line">        <span class="number">0x2006</span> : <span class="string">"kDexTypeAnnotationsDirectoryItem"</span> ,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseHeader</span><span class="params">(header_data)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span>    <span class="comment"># 实现在上一节</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseMapList</span><span class="params">(map_data)</span>:</span></span><br><span class="line">    DexStruct.DexMapList[<span class="string">'size'</span>] = struct.unpack(<span class="string">'H'</span>,map_data[:<span class="number">2</span>])[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    curPos = <span class="number">4</span></span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> range(DexStruct.DexMapList[<span class="string">'size'</span>]):</span><br><span class="line">        tmpDexMapItem = &#123;</span><br><span class="line">            <span class="string">"type"</span> : struct.unpack(<span class="string">'H'</span>,map_data[curPos:curPos+<span class="number">2</span>])[<span class="number">0</span>],</span><br><span class="line">            <span class="string">"unused"</span> : <span class="number">0</span>,</span><br><span class="line">            <span class="string">"size"</span>  : struct.unpack(<span class="string">'I'</span>,map_data[curPos+<span class="number">4</span>:curPos+<span class="number">8</span>])[<span class="number">0</span>],</span><br><span class="line">            <span class="string">"offset"</span> : struct.unpack(<span class="string">'I'</span>,map_data[curPos+<span class="number">8</span>:curPos+<span class="number">12</span>])[<span class="number">0</span>] &#125;</span><br><span class="line">        curPos += <span class="number">12</span></span><br><span class="line">        DexStruct.DexMapList[<span class="string">"DexMapItem"</span>].append(tmpDexMapItem)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">"classes.dex"</span>, <span class="string">'rb'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        parseHeader(f.read(<span class="number">0x70</span>))</span><br><span class="line">        f.seek(DexStruct.DexHeader[<span class="string">'mapOff'</span>])</span><br><span class="line">        parseMapList(f.read())</span><br><span class="line"></span><br><span class="line">        <span class="keyword">print</span> <span class="string">'type                 size            offset'</span></span><br><span class="line">        l = len(DexStruct.DexMapList[<span class="string">'DexMapItem'</span>])</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(l):</span><br><span class="line">            <span class="keyword">print</span> DexStruct.DexMapItemCode[DexStruct.DexMapList[<span class="string">'DexMapItem'</span>][i][<span class="string">'type'</span>]],</span><br><span class="line">            <span class="keyword">print</span> hex(DexStruct.DexMapList[<span class="string">'DexMapItem'</span>][i][<span class="string">'size'</span>]),</span><br><span class="line">            <span class="keyword">print</span> hex(DexStruct.DexMapList[<span class="string">'DexMapItem'</span>][i][<span class="string">'offset'</span>])</span><br></pre></td></tr></table></figure>
+<h3 id="Reference">Reference</h3><p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">《Android 软件安全与逆向分析》</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android-安全/" rel="tag">#Android 安全</a>
+          
+            <a href="/tags/dex/" rel="tag">#dex</a>
+          
+        </div>
+      
+
+
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/17/parse-dex-file-part-dex-header/" rel="next" title="解析 dex 文件结构 - DexHeader">
+                <i class="fa fa-chevron-left"></i> 解析 dex 文件结构 - DexHeader
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2015/11/18/parse-dex-file-part-map-list/"
+                   data-title="解析 dex 文件结构 - map_list" data-url="http://kiya-z.github.io/2015/11/18/parse-dex-file-part-map-list/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="Kiya" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Kiya</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">Stupid Girl.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/kiya-z" target="_blank">
+                  <i class="fa fa-github"></i> github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/kiiiiiiiya" target="_blank">
+                  <i class="fa fa-twitter"></i> twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/kiya-z" target="_blank">
+                  <i class="fa fa-zhihu"></i> zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+            <p class="site-author-name">友情链接</p>
+            
+              <span class="links-of-author-item">
+                <a href="http://hkcoding.sinaapp.com" target="_blank">Hanks</a>
+              </span>
+            
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是_map_list？"><span class="nav-number">1.</span> <span class="nav-text">什么是 map_list？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结构"><span class="nav-number">2.</span> <span class="nav-text">结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DexMapList"><span class="nav-number">2.1.</span> <span class="nav-text">DexMapList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DexMapItem"><span class="nav-number">2.2.</span> <span class="nav-text">DexMapItem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#type"><span class="nav-number">2.3.</span> <span class="nav-text">type</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#手工查找"><span class="nav-number">3.</span> <span class="nav-text">手工查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写程序解析_map_list"><span class="nav-number">4.</span> <span class="nav-text">写程序解析 map_list</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">4.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kiya</span>
+
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <span id="busuanzi_container_site_uv">
+      哎呀!你抢到了第<span id="busuanzi_value_site_uv"></span>枚板凳
+  </span>
+
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"kiiiiiiiya-z-github-io"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.2" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+
+      motionIntegrator.bootstrap();
+    });
+  </script>
+
+  
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
