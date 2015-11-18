@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-18T06:27:03.778Z</updated>
+  <updated>2015-11-18T06:28:46.222Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/"/>
     <id>http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/</id>
     <published>2015-11-17T14:32:58.000Z</published>
-    <updated>2015-11-18T06:27:03.778Z</updated>
+    <updated>2015-11-18T06:28:46.222Z</updated>
     <content type="html"><![CDATA[<h3 id="简介">简介</h3><p>dex 文件是 dalvik 虚拟机的可执行文件。</p>
 <a id="more"></a>
 <hr>
@@ -59,7 +59,7 @@
 </tr>
 <tr>
 <td><strong> endianTag</strong></td>
-<td>两种字节序取值: uint ENDIAN_CONSTANT = 0x12345678; uint REVERSE_ENDIAN_CONSTANT = 0x78563412</td>
+<td>两种字节序取值: <code>uint ENDIAN_CONSTANT = 0x12345678</code> ; <code>uint REVERSE_ENDIAN_CONSTANT = 0x78563412</code></td>
 </tr>
 <tr>
 <td><strong> linkSize</strong></td>
