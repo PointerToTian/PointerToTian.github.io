@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-19T14:53:29.644Z</updated>
+  <updated>2015-11-19T16:16:41.560Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://kiya-z.github.io/2015/11/19/parse-dex-file-part-strings-and-type-descriptors/"/>
     <id>http://kiya-z.github.io/2015/11/19/parse-dex-file-part-strings-and-type-descriptors/</id>
     <published>2015-11-19T14:44:52.000Z</published>
-    <updated>2015-11-19T14:53:29.644Z</updated>
+    <updated>2015-11-19T16:16:41.560Z</updated>
     <content type="html"><![CDATA[<h1 id="前言">前言</h1><p>在 <a href="http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/">解析 dex 文件结构 - DexHeader</a> 中我们知道 Table 部分就是索引结构区，他们是是作为指向 Data 区数据的结构索引而存在的。<br>数据区是 dex 会用到的全部数据。</p>
 <a id="more"></a>
 <hr>
@@ -148,7 +148,61 @@
 <p>stringIdsSize：0x19<br>stringIdsOff：0x01e0</p>
 <p>0x01e0 ~ 0x0244</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">000001e0</span>  <span class="number">05</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">07</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">0</span>b <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">000001f</span>0  <span class="number">0</span>d <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>e <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">0f</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000200</span>  <span class="number">11</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">12</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">13</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">14</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000210</span>  <span class="number">15</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">16</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">17</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">18</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000220</span>  <span class="number">19</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">1</span>b <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000230</span>  <span class="number">1</span>d <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>e <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">21</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">26</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |........!...&amp;...|</span><br><span class="line"><span class="number">00000240</span>  <span class="number">29</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
-<p>以第一个索引值 0x05 为例，在 StringIds 中找到第 0x05 个 StringId，也就是 0x0070(stringIdsOff) + 0x05 * 4 = 0x0084，<br>该地址值为 0x0541，0x0541 处的字符串为 “I”，int 类型。类型对照参见 Dalvik 字节码类型。</p>
+<p>以第一个索引值 0x05 为例，在 StringIds 中找到第 0x05 个 StringId，也就是 0x0070(stringIdsOff) + 0x05 * 4 = 0x0084，<br>该地址值为 0x0541，0x0541 处的字符串为 “I”，int 类型。类型对照参见下表 - Dalvik 字节码类型。</p>
+<table>
+<thead>
+<tr>
+<th>语法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V</td>
+<td>void; 只用于返回值</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>B</td>
+<td>byte</td>
+</tr>
+<tr>
+<td>S</td>
+<td>short</td>
+</tr>
+<tr>
+<td>C</td>
+<td>char</td>
+</tr>
+<tr>
+<td>I</td>
+<td>int</td>
+</tr>
+<tr>
+<td>J</td>
+<td>long</td>
+</tr>
+<tr>
+<td>F</td>
+<td>float</td>
+</tr>
+<tr>
+<td>D</td>
+<td>double</td>
+</tr>
+<tr>
+<td>Lfully/qualified/Name;</td>
+<td>the class fully.qualified.Name</td>
+</tr>
+<tr>
+<td>[descriptor</td>
+<td>数组描述符，可以表示多维数组如 [[[descriptor，但最多只能有255个维度</td>
+</tr>
+</tbody>
+</table>
 <p>以此类推：</p>
 <table>
 <thead>
