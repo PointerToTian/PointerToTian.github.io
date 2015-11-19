@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-19T06:06:34.798Z</updated>
+  <updated>2015-11-19T06:13:37.390Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -19,11 +19,11 @@
     <link href="http://kiya-z.github.io/2015/11/19/tools-010-editor/"/>
     <id>http://kiya-z.github.io/2015/11/19/tools-010-editor/</id>
     <published>2015-11-18T17:22:42.000Z</published>
-    <updated>2015-11-19T06:06:34.798Z</updated>
+    <updated>2015-11-19T06:13:37.390Z</updated>
     <content type="html"><![CDATA[<h2 id="介绍">介绍</h2><p>010 Editor 是一款 16 进制编辑器，Text Editor 、HexEditor 、Disk Editor &amp; Process Editor .</p>
 <a id="more"></a>
 <p>支持文件的二进制比较；</p>
-<p>支持 bmp 、avi 、map3 、map4 等常见文件和 AndroidManifest、dex 、elf 、exe等程序员文件的解析，学习文件格式解析的时候再也不用怕点来点去找不到字节了～ 这些解析脚本都是由很多人提交的，如果你认为现有的脚本有何不足或者你解析了一种新的文件格式，都可以向网站提交，然后出现在下载页面！</p>
+<p>支持 bmp 、avi 、map3 、map4 等常见文件和 AndroidManifest、dex 、elf 、exe等程序员文件的解析，学习文件格式解析的时候再也不用怕点来点去找不到字节了～<br>这些解析脚本都是由很多人提交的，如果你认为现有的脚本有何不足或者你解析了一种新的文件格式，都可以向网站提交，然后出现在下载页面！</p>
 <p>30 天试用期。</p>
 <h2 id="链接">链接</h2><p><a href="http://www.sweetscape.com/010editor/" target="_blank" rel="external">官网</a></p>
 <p><a href="http://www.sweetscape.com/010editor/templates/" target="_blank" rel="external">脚本下载</a></p>
@@ -430,7 +430,7 @@
     <link href="http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/"/>
     <id>http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/</id>
     <published>2015-11-17T14:32:58.000Z</published>
-    <updated>2015-11-18T09:39:09.754Z</updated>
+    <updated>2015-11-19T06:14:50.802Z</updated>
     <content type="html"><![CDATA[<h2 id="dex_简介">dex 简介</h2><p>dex 文件是 dalvik 虚拟机的可执行文件。</p>
 <a id="more"></a>
 <hr>
@@ -544,7 +544,8 @@
 </tbody>
 </table>
 <hr>
-<h2 id="手工查找">手工查找</h2><p>linux 下可以使用 <code>hexdump</code> 查看某文件的二进制数据 -&gt; <code>hexdump -C classes.dex</code></p>
+<h2 id="手工查找">手工查找</h2><p>更方便的方式是使用 <a href="http://www.sweetscape.com/download/010editor/" target="_blank" rel="external">010 Editor</a>，下载其官网上可解析 dex 文件的<a href="http://www.sweetscape.com/010editor/templates/" target="_blank" rel="external">脚本文件</a>，可高亮相应的二进制。</p>
+<p>linux 下可以使用 <code>hexdump</code> 查看某文件的二进制数据 -&gt; <code>hexdump -C classes.dex</code></p>
 <p><a href="http://archive.oreilly.com/linux/cmd/cmd.csp?path=h/hexdump" target="_blank" rel="external">常用选项</a></p>
 <table>
 <thead>
