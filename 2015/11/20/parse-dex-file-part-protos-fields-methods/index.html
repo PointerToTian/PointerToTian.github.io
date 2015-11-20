@@ -53,7 +53,7 @@
 <meta property="og:url" content="http://kiya-z.github.io/2015/11/20/parse-dex-file-part-protos-fields-methods/index.html">
 <meta property="og:site_name" content="kiya's pigsty">
 <meta property="og:description" content="ProtoIdsProtoIds 存放的是原型的声明，包括原型简名、参数和返回值。ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。">
-<meta property="og:updated_time" content="2015-11-20T10:35:22.564Z">
+<meta property="og:updated_time" content="2015-11-20T10:49:30.552Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods">
 <meta name="twitter:description" content="ProtoIdsProtoIds 存放的是原型的声明，包括原型简名、参数和返回值。ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。">
@@ -395,7 +395,7 @@
 <h2 id="手动查找-1">手动查找</h2><p><strong>某 dex 文件的 methodIds 部分</strong>：</p>
 <p>methodIdsSize : 0x2b<br>methodIdsOff : 0x0324</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000320</span>  .. .. .. .. <span class="number">02</span> <span class="number">00</span> <span class="number">07</span> <span class="number">00</span>  <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">02</span> <span class="number">00</span> <span class="number">08</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000330</span>  <span class="number">30</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> .. ...</span><br><span class="line">........</span><br><span class="line"><span class="number">00000470</span>  <span class="number">42</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">15</span> <span class="number">00</span> <span class="number">04</span> <span class="number">00</span>  <span class="number">43</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
-<p>以第一个 <code>02 00 07 00 03 00 00 00</code> 为例：<br>classIdx=0x02 =&gt; Landroid/app/Application;<br>protoIdx=0x07 =&gt; void ()<br>nameIdx=0x03 =&gt; @init@ (@替换为尖括号)<br>即该函数为 void android.app.Application.@init@()</p>
+<p>以第一个 <code>02 00 07 00 03 00 00 00</code> 为例：<br>classIdx=0x02 =&gt; Landroid/app/Application;<br>protoIdx=0x07 =&gt; void ()<br>nameIdx=0x03 =&gt; &lt;init&gt; (@替换为尖括号)<br>即该函数为 void android.app.Application.&lt;init&gt;()</p>
 <p>以此类推：</p>
 <table>
 <thead>
