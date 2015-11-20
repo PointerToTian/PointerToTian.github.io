@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-20T10:49:30.552Z</updated>
+  <updated>2015-11-20T10:55:04.520Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://kiya-z.github.io/2015/11/20/parse-dex-file-part-protos-fields-methods/"/>
     <id>http://kiya-z.github.io/2015/11/20/parse-dex-file-part-protos-fields-methods/</id>
     <published>2015-11-20T10:13:54.000Z</published>
-    <updated>2015-11-20T10:49:30.552Z</updated>
+    <updated>2015-11-20T10:55:04.520Z</updated>
     <content type="html"><![CDATA[<h1 id="ProtoIds">ProtoIds</h1><p>ProtoIds 存放的是<strong>原型的声明</strong>，包括原型简名、参数和返回值。<br>ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
 <a id="more"></a>
 <h2 id="结构">结构</h2><p>ProtoIds 以4字节对齐，即总大小为 4 * 3 * protoIdsSize .</p>
@@ -139,7 +139,7 @@
 <h2 id="手动查找-1">手动查找</h2><p><strong>某 dex 文件的 methodIds 部分</strong>：</p>
 <p>methodIdsSize : 0x2b<br>methodIdsOff : 0x0324</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000320</span>  .. .. .. .. <span class="number">02</span> <span class="number">00</span> <span class="number">07</span> <span class="number">00</span>  <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">02</span> <span class="number">00</span> <span class="number">08</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000330</span>  <span class="number">30</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> .. ...</span><br><span class="line">........</span><br><span class="line"><span class="number">00000470</span>  <span class="number">42</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">15</span> <span class="number">00</span> <span class="number">04</span> <span class="number">00</span>  <span class="number">43</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
-<p>以第一个 <code>02 00 07 00 03 00 00 00</code> 为例：<br>classIdx=0x02 =&gt; Landroid/app/Application;<br>protoIdx=0x07 =&gt; void ()<br>nameIdx=0x03 =&gt; &lt;init&gt; (@替换为尖括号)<br>即该函数为 void android.app.Application.&lt;init&gt;()</p>
+<p>以第一个 <code>02 00 07 00 03 00 00 00</code> 为例：<br>classIdx=0x02 =&gt; Landroid/app/Application;<br>protoIdx=0x07 =&gt; void ()<br>nameIdx=0x03 =&gt; &lt;init&gt;<br>即该函数为 void android.app.Application.&lt;init&gt;()</p>
 <p>以此类推：</p>
 <table>
 <thead>
