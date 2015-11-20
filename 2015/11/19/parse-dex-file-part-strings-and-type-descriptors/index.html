@@ -49,13 +49,13 @@
 
 <meta name="description" content="前言在 解析 dex 文件结构 - DexHeader 中我们知道 Table 部分就是索引结构区，他们是是作为指向 Data 区数据的结构索引而存在的。数据区是 dex 会用到的全部数据。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="解析 dex 文件结构 - 索引区和数据区（一） - Strings & TypeDescriptors">
+<meta property="og:title" content="解析 dex 文件结构 - 索引区和数据区（一） - Strings & Types">
 <meta property="og:url" content="http://kiya-z.github.io/2015/11/19/parse-dex-file-part-strings-and-type-descriptors/index.html">
 <meta property="og:site_name" content="kiya's pigsty">
 <meta property="og:description" content="前言在 解析 dex 文件结构 - DexHeader 中我们知道 Table 部分就是索引结构区，他们是是作为指向 Data 区数据的结构索引而存在的。数据区是 dex 会用到的全部数据。">
-<meta property="og:updated_time" content="2015-11-19T16:16:41.560Z">
+<meta property="og:updated_time" content="2015-11-20T10:15:41.744Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="解析 dex 文件结构 - 索引区和数据区（一） - Strings & TypeDescriptors">
+<meta name="twitter:title" content="解析 dex 文件结构 - 索引区和数据区（一） - Strings & Types">
 <meta name="twitter:description" content="前言在 解析 dex 文件结构 - DexHeader 中我们知道 Table 部分就是索引结构区，他们是是作为指向 Data 区数据的结构索引而存在的。数据区是 dex 会用到的全部数据。">
 
 
@@ -68,7 +68,7 @@
 
 
 
-  <title> 解析 dex 文件结构 - 索引区和数据区（一） - Strings & TypeDescriptors | kiya's pigsty </title>
+  <title> 解析 dex 文件结构 - 索引区和数据区（一） - Strings & Types | kiya's pigsty </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -215,7 +215,7 @@
             
             
               
-                解析 dex 文件结构 - 索引区和数据区（一） - Strings & TypeDescriptors
+                解析 dex 文件结构 - 索引区和数据区（一） - Strings & Types
               
             
           </h1>
@@ -393,7 +393,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="写程序解析字符串">写程序解析字符串</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">readuleb128</span><span class="params">(f)</span>:</span></span><br><span class="line">    num = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment"># 读第一字节</span></span><br><span class="line">    <span class="keyword">if</span> num &gt; <span class="number">0x7f</span> :</span><br><span class="line">        cur = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment">#读第二字节</span></span><br><span class="line">        num = (num <span class="keyword">and</span> <span class="number">0x7f</span>) <span class="keyword">or</span> ((cur <span class="keyword">and</span> <span class="number">0x7f</span>) &lt;&lt; <span class="number">7</span>)</span><br><span class="line">        <span class="keyword">if</span> cur &gt; <span class="number">0x7f</span>:</span><br><span class="line">            cur = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment">#读第三字节</span></span><br><span class="line">            num = num <span class="keyword">or</span> ((cur <span class="keyword">and</span> <span class="number">0x7f</span>) &lt;&lt; <span class="number">14</span>)</span><br><span class="line">            <span class="keyword">if</span> cur &gt; <span class="number">0x7f</span>:</span><br><span class="line">                cur = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment">#读第四字节</span></span><br><span class="line">                num = num <span class="keyword">or</span> ((cur <span class="keyword">and</span> <span class="number">0x7f</span>) &lt;&lt; <span class="number">21</span>)</span><br><span class="line">                <span class="keyword">if</span> cur &gt; <span class="number">0x7f</span>:</span><br><span class="line">                    cur = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment">#读第五字节</span></span><br><span class="line">                    num = num <span class="keyword">or</span> ((cur <span class="keyword">and</span> <span class="number">0x7f</span>) &lt;&lt; <span class="number">28</span>)</span><br><span class="line">    <span class="keyword">return</span> num</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseStrings</span><span class="params">(f)</span>:</span></span><br><span class="line"></span><br><span class="line">    f.seek(DexStruct.DexHeader[<span class="string">'stringIdsOff'</span>])</span><br><span class="line">    stringIds_data = f.read(<span class="number">4</span>*DexStruct.DexHeader[<span class="string">'stringIdsSize'</span>])</span><br><span class="line"></span><br><span class="line">    cur_pos = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(DexStruct.DexHeader[<span class="string">'stringIdsSize'</span>]):</span><br><span class="line">        str_off =  struct.unpack(<span class="string">'I'</span>,stringIds_data[cur_pos:cur_pos+<span class="number">4</span>])[<span class="number">0</span>]</span><br><span class="line">        f.seek(str_off)</span><br><span class="line">        str_len = readuleb128(f)</span><br><span class="line">        str_content = f.read(str_len)</span><br><span class="line">        cur_pos += <span class="number">4</span></span><br><span class="line">        tmpDexStringItem = &#123;</span><br><span class="line">            <span class="string">'offset'</span> : str_off,</span><br><span class="line">            <span class="string">'len'</span> : str_len,</span><br><span class="line">            <span class="string">'content'</span> : str_content,</span><br><span class="line">            <span class="string">'TypeSign'</span>: <span class="keyword">False</span></span><br><span class="line">        &#125;</span><br><span class="line">        DexStruct.DexStrings.append(tmpDexStringItem)</span><br></pre></td></tr></table></figure>
+<h2 id="写程序解析字符串">写程序解析字符串</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">readuleb128</span><span class="params">(f)</span>:</span></span><br><span class="line">    num = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment"># 读第一字节</span></span><br><span class="line">    <span class="keyword">if</span> num &gt; <span class="number">0x7f</span> :</span><br><span class="line">        cur = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment">#读第二字节</span></span><br><span class="line">        num = (num <span class="keyword">and</span> <span class="number">0x7f</span>) <span class="keyword">or</span> ((cur <span class="keyword">and</span> <span class="number">0x7f</span>) &lt;&lt; <span class="number">7</span>)</span><br><span class="line">        <span class="keyword">if</span> cur &gt; <span class="number">0x7f</span>:</span><br><span class="line">            cur = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment">#读第三字节</span></span><br><span class="line">            num = num <span class="keyword">or</span> ((cur <span class="keyword">and</span> <span class="number">0x7f</span>) &lt;&lt; <span class="number">14</span>)</span><br><span class="line">            <span class="keyword">if</span> cur &gt; <span class="number">0x7f</span>:</span><br><span class="line">                cur = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment">#读第四字节</span></span><br><span class="line">                num = num <span class="keyword">or</span> ((cur <span class="keyword">and</span> <span class="number">0x7f</span>) &lt;&lt; <span class="number">21</span>)</span><br><span class="line">                <span class="keyword">if</span> cur &gt; <span class="number">0x7f</span>:</span><br><span class="line">                    cur = struct.unpack(<span class="string">'B'</span>,f.read(<span class="number">1</span>))[<span class="number">0</span>]     <span class="comment">#读第五字节</span></span><br><span class="line">                    num = num <span class="keyword">or</span> ((cur <span class="keyword">and</span> <span class="number">0x7f</span>) &lt;&lt; <span class="number">28</span>)</span><br><span class="line">    <span class="keyword">return</span> num</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseStrings</span><span class="params">(f)</span>:</span></span><br><span class="line"></span><br><span class="line">    f.seek(DexStruct.DexHeader[<span class="string">'stringIdsOff'</span>])</span><br><span class="line">    stringIds_data = f.read(<span class="number">4</span>*DexStruct.DexHeader[<span class="string">'stringIdsSize'</span>])</span><br><span class="line"></span><br><span class="line">    cur_pos = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(DexStruct.DexHeader[<span class="string">'stringIdsSize'</span>]):</span><br><span class="line">        str_off =  struct.unpack(<span class="string">'I'</span>,stringIds_data[cur_pos:cur_pos+<span class="number">4</span>])[<span class="number">0</span>]</span><br><span class="line">        f.seek(str_off)</span><br><span class="line">        str_len = readuleb128(f)</span><br><span class="line">        str_content = f.read(str_len)</span><br><span class="line">        cur_pos += <span class="number">4</span></span><br><span class="line">        tmpDexStringItem = &#123;</span><br><span class="line">            <span class="string">'offset'</span> : str_off,</span><br><span class="line">            <span class="string">'len'</span> : str_len,</span><br><span class="line">            <span class="string">'content'</span> : str_content,</span><br><span class="line">        &#125;</span><br><span class="line">        DexStruct.DexStrings.append(tmpDexStringItem)</span><br></pre></td></tr></table></figure>
 <hr>
 <h1 id="TypeIds">TypeIds</h1><p>TypeIds 存放的是 stringIds 内的索引，也就是说 StringData 里面的一些字符串是类型描述符。<br>TypeIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
 <p>这里的类型描述符可以代表 dex 文件中的任何类型，包括基本类型，类类型，数组类型和空类型。</p>
@@ -401,7 +401,7 @@
 <figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"type_id_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexTypeId &#123;</span><br><span class="line">    u4  descriptorIdx;      /<span class="keyword">*</span> index into stringIds list for type descriptor <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>通过 <code>descriptorIdx</code> 可以得到相应<code>类型描述符</code>的字符串的 StringId，从而找到相应的字符串。</p>
 <h2 id="手动查找">手动查找</h2><p><strong>某 dex 文件的 TypeIds 部分</strong>：</p>
-<p>stringIdsSize：0x19<br>stringIdsOff：0x01e0</p>
+<p>TypeIdsSize：0x19<br>TypeIdsOff：0x01e0</p>
 <p>0x01e0 ~ 0x0244</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">000001e0</span>  <span class="number">05</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">07</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">0</span>b <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">000001f</span>0  <span class="number">0</span>d <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>e <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">0f</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000200</span>  <span class="number">11</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">12</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">13</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">14</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000210</span>  <span class="number">15</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">16</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">17</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">18</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000220</span>  <span class="number">19</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">1</span>b <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000230</span>  <span class="number">1</span>d <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>e <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">21</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">26</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |........!...&amp;...|</span><br><span class="line"><span class="number">00000240</span>  <span class="number">29</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
 <p>以第一个索引值 0x05 为例，在 StringIds 中找到第 0x05 个 StringId，也就是 0x0070(stringIdsOff) + 0x05 * 4 = 0x0084，<br>该地址值为 0x0541，0x0541 处的字符串为 “I”，int 类型。类型对照参见下表 - Dalvik 字节码类型。</p>
@@ -451,7 +451,7 @@
 </tr>
 <tr>
 <td>Lfully/qualified/Name;</td>
-<td>the class fully.qualified.Name</td>
+<td>类名：fully.qualified.Name</td>
 </tr>
 <tr>
 <td>[descriptor</td>
@@ -472,175 +472,175 @@
 </thead>
 <tbody>
 <tr>
-<td>0x01</td>
+<td>0x00</td>
 <td>0x05</td>
 <td>0x0084</td>
 <td>I</td>
 <td>int</td>
 </tr>
 <tr>
-<td>0x02</td>
+<td>0x01</td>
 <td>0x07</td>
 <td>0x008c</td>
 <td>J</td>
 <td>long</td>
 </tr>
 <tr>
-<td>0x03</td>
+<td>0x02</td>
 <td>0x0b</td>
 <td>0x009c</td>
 <td>Landroid/app/Application;</td>
 <td>android.app.Application</td>
 </tr>
 <tr>
-<td>0x04</td>
+<td>0x03</td>
 <td>0x0c</td>
 <td>0x00a0</td>
 <td>Landroid/content/Context;</td>
 <td>android.content.Context</td>
 </tr>
 <tr>
-<td>0x05</td>
+<td>0x04</td>
 <td>0x0d</td>
 <td>0x00a4</td>
 <td>Landroid/os/Build;</td>
 <td>android.os.Build</td>
 </tr>
 <tr>
-<td>0x06</td>
+<td>0x05</td>
 <td>0x0e</td>
 <td>0x00a8</td>
 <td>Lcom/shell/NativeApplication;</td>
 <td>com.shell.NativeApplication</td>
 </tr>
 <tr>
-<td>0x07</td>
+<td>0x06</td>
 <td>0x0f</td>
 <td>0x00ac</td>
 <td>Lcom/shell/SuperApplication;</td>
 <td>com.shell.SuperApplication</td>
 </tr>
 <tr>
-<td>0x08</td>
+<td>0x07</td>
 <td>0x10</td>
 <td>0x00b0</td>
 <td>Ldalvik/annotation/Throws;</td>
 <td>dalvik.annotation.Throws</td>
 </tr>
 <tr>
-<td>0x09</td>
+<td>0x08</td>
 <td>0x11</td>
 <td>0x00b4</td>
 <td>Ljava/io/File;</td>
 <td>java.io.File</td>
 </tr>
 <tr>
-<td>0x0a</td>
+<td>0x09</td>
 <td>0x12</td>
 <td>0x00b8</td>
 <td>Ljava/io/FileInputStream;</td>
 <td>java.io.FileInputStream</td>
 </tr>
 <tr>
-<td>0x0b</td>
+<td>0x0a</td>
 <td>0x13</td>
 <td>0x00bc</td>
 <td>Ljava/io/FileOutputStream;</td>
 <td>java.io.FileOutputStream</td>
 </tr>
 <tr>
-<td>0x0c</td>
+<td>0x0b</td>
 <td>0x14</td>
 <td>0x00c0</td>
 <td>Ljava/io/IOException;</td>
 <td>java.io.IOException</td>
 </tr>
 <tr>
-<td>0x0d</td>
+<td>0x0c</td>
 <td>0x15</td>
 <td>0x00c4</td>
 <td>Ljava/io/InputStream;</td>
 <td>java.io.InputStream</td>
 </tr>
 <tr>
-<td>0x0e</td>
+<td>0x0d</td>
 <td>0x16</td>
 <td>0x00c8</td>
 <td>Ljava/lang/Exception;</td>
 <td>java.lang.Exception</td>
 </tr>
 <tr>
-<td>0x0f</td>
+<td>0x0e</td>
 <td>0x17</td>
 <td>0x00cc</td>
 <td>Ljava/lang/Object;</td>
 <td>java.lang.Object</td>
 </tr>
 <tr>
-<td>0x10</td>
+<td>0x0f</td>
 <td>0x18</td>
 <td>0x00d0</td>
 <td>Ljava/lang/String;</td>
 <td>java.lang.String</td>
 </tr>
 <tr>
-<td>0x11</td>
+<td>0x10</td>
 <td>0x19</td>
 <td>0x00d4</td>
 <td>Ljava/lang/System;</td>
 <td>java.lang.System</td>
 </tr>
 <tr>
-<td>0x12</td>
+<td>0x11</td>
 <td>0x1a</td>
 <td>0x00d8</td>
 <td>Ljava/util/zip/CRC32;</td>
 <td>java.util.zip.CRC32</td>
 </tr>
 <tr>
-<td>0x13</td>
+<td>0x12</td>
 <td>0x1b</td>
 <td>0x00dc</td>
 <td>Ljava/util/zip/CheckedInputStream;</td>
 <td>java.util.zip.CheckedInputStream</td>
 </tr>
 <tr>
-<td>0x14</td>
+<td>0x13</td>
 <td>0x1c</td>
 <td>0x00e0</td>
 <td>Ljava/util/zip/Checksum;</td>
 <td>java.util.zip.Checksum</td>
 </tr>
 <tr>
-<td>0x15</td>
+<td>0x14</td>
 <td>0x1d</td>
 <td>0x00e4</td>
 <td>Ljava/util/zip/ZipEntry;</td>
 <td>java.util.zip.ZipEntry</td>
 </tr>
 <tr>
-<td>0x16</td>
+<td>0x15</td>
 <td>0x1e</td>
 <td>0x00e8</td>
 <td>Ljava/util/zip/ZipFile;</td>
 <td>java.util.zip.ZipFile</td>
 </tr>
 <tr>
-<td>0x17</td>
+<td>0x16</td>
 <td>0x21</td>
 <td>0x00f4</td>
 <td>V</td>
 <td>void</td>
 </tr>
 <tr>
-<td>0x18</td>
+<td>0x17</td>
 <td>0x26</td>
 <td>0x0108</td>
 <td>Z</td>
 <td>boolean</td>
 </tr>
 <tr>
-<td>0x19</td>
+<td>0x18</td>
 <td>0x29</td>
 <td>0x0114</td>
 <td>[B]</td>
@@ -648,7 +648,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="写程序解析_TypeIds">写程序解析 TypeIds</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseTypeDescriptions</span><span class="params">(f)</span>:</span></span><br><span class="line">    <span class="string">'''</span><br><span class="line">    此函数基于 parseStrings 函数的结果，调用前需先调用 parseStrings</span><br><span class="line">    '''</span></span><br><span class="line">    f.seek(DexStruct.DexHeader[<span class="string">'typeIdsOff'</span>])</span><br><span class="line"></span><br><span class="line">    cur_pos = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(DexStruct.DexHeader[<span class="string">'typeIdsSize'</span>]):</span><br><span class="line">        type_desc_id = struct.unpack(<span class="string">'I'</span>,f.read(<span class="number">4</span>))[<span class="number">0</span>]</span><br><span class="line">        DexStruct.DexStrings[type_desc_id][<span class="string">'TypeSign'</span>] = <span class="keyword">True</span></span><br><span class="line">        cur_pos += <span class="number">4</span></span><br></pre></td></tr></table></figure>
+<h2 id="写程序解析_TypeIds">写程序解析 TypeIds</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseTypes</span><span class="params">(f)</span>:</span></span><br><span class="line">    <span class="string">'''</span><br><span class="line">    此函数基于 parseStrings 函数的结果，调用前需先调用 parseStrings</span><br><span class="line">    '''</span></span><br><span class="line">    f.seek(DexStruct.DexHeader[<span class="string">'typeIdsOff'</span>])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(DexStruct.DexHeader[<span class="string">'typeIdsSize'</span>]):</span><br><span class="line">        type_desc_id = struct.unpack(<span class="string">'I'</span>,f.read(<span class="number">4</span>))[<span class="number">0</span>]</span><br><span class="line">        DexStruct.DexTypes.append(DexStruct.DexStrings[type_desc_id])</span><br></pre></td></tr></table></figure>
 <hr>
 <h1 id="Reference">Reference</h1><p><a href="https://source.android.com/devices/tech/dalvik/dex-format.html" target="_blank" rel="external">Dalvik Executable format</a></p>
 <p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">《Android 软件安全与逆向分析》</a></p>
@@ -681,6 +681,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2015/11/20/parse-dex-file-part-protos-fields-methods/" rel="prev" title="解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods">
+                解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -705,7 +709,7 @@
           <div class="comments" id="comments">
             
               <div class="ds-thread" data-thread-key="2015/11/19/parse-dex-file-part-strings-and-type-descriptors/"
-                   data-title="解析 dex 文件结构 - 索引区和数据区（一） - Strings & TypeDescriptors" data-url="http://kiya-z.github.io/2015/11/19/parse-dex-file-part-strings-and-type-descriptors/">
+                   data-title="解析 dex 文件结构 - 索引区和数据区（一） - Strings & Types" data-url="http://kiya-z.github.io/2015/11/19/parse-dex-file-part-strings-and-type-descriptors/">
               </div>
             
           </div>
@@ -748,7 +752,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-count">12</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

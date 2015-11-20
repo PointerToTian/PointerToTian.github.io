@@ -1,0 +1,910 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+  
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+<link rel="stylesheet" type="text/css" href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" />
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.2"/>
+
+
+    <meta name="description" content="Stupid Girl." />
+
+
+
+  <meta name="keywords" content="Android 安全,dex," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="kiya's pigsty" type="application/atom+xml" />
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+<meta name="description" content="ProtoIdsProtoIds 存放的是原型的声明，包括原型简名、参数和返回值。ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods">
+<meta property="og:url" content="http://kiya-z.github.io/2015/11/20/parse-dex-file-part-protos-fields-methods/index.html">
+<meta property="og:site_name" content="kiya's pigsty">
+<meta property="og:description" content="ProtoIdsProtoIds 存放的是原型的声明，包括原型简名、参数和返回值。ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。">
+<meta property="og:updated_time" content="2015-11-20T10:35:22.564Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods">
+<meta name="twitter:description" content="ProtoIdsProtoIds 存放的是原型的声明，包括原型简名、参数和返回值。ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+
+
+  <title> 解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods | kiya's pigsty </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?4b44b74c1d52dddc6ae8ca77358b0b6c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">kiya's pigsty</span>
+      <span class="logo-line-after"><i></i></span>
+
+    </a>
+  </div>
+  <p class="site-subtitle">No Further Delay!</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+  
+    
+
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-11-20T18:13:54+08:00" content="2015-11-20">
+              2015-11-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/11/20/parse-dex-file-part-protos-fields-methods/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/20/parse-dex-file-part-protos-fields-methods/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+
+              <span id="busuanzi_container_page_pv">
+                  &nbsp; | &nbsp;
+                  <span id="busuanzi_value_page_pv"></span>&nbsp; Hits
+              </span>
+
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body">
+      
+      
+
+      
+        <span itemprop="articleBody"><h1 id="ProtoIds">ProtoIds</h1><p>ProtoIds 存放的是<strong>原型的声明</strong>，包括原型简名、参数和返回值。<br>ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
+<a id="more"></a>
+<h2 id="结构">结构</h2><p>ProtoIds 以4字节对齐，即总大小为 4 * 3 * protoIdsSize .</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"proto_id_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexProtoId &#123;</span><br><span class="line">    u4  shortyIdx;          /<span class="keyword">*</span> 指向 stringIds 的索引，表示简名 <span class="keyword">*</span>/</span><br><span class="line">    u4  returnTypeIdx;      /<span class="keyword">*</span> 指向 TypeIds 的索引，表示返回类型 <span class="keyword">*</span>/</span><br><span class="line">    u4  parametersOff;      /<span class="keyword">*</span> 指向 type_list 的文件偏移，表示参数列表，为 0 表示没有参数，参数类型中没有空<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"type_list"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexTypeList &#123;</span><br><span class="line">    u4  size;               /<span class="keyword">*</span> DexTypeItem 的个数 <span class="keyword">*</span>/</span><br><span class="line">    DexTypeItem list[1];    /<span class="keyword">*</span> DexTypeItem 数组内容 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"type_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexTypeItem &#123;</span><br><span class="line">    u2  typeIdx;            /<span class="keyword">*</span> 指向 typeIds 的索引<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="手工查找">手工查找</h2><p><strong>某 dex 文件的 ProtoIds 部分</strong>：</p>
+<p>protoIdsSize : 0x12<br>protoIdsOff : 0x0244</p>
+<p>0x0244 ~ 0x031c</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000240</span>  <span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="number">06</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">40</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span>  |)<span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="built_in">..</span>@<span class="attribute">...</span>|</span><br><span class="line"><span class="number">00000250</span>  <span class="number">07</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">08</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |<span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="built_in">.</span>|</span><br><span class="line"><span class="number">00000260</span>  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">48</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span>  <span class="number">09</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">08</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |<span class="attribute">...</span><span class="built_in">.</span>H<span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="built_in">..</span>|</span><br><span class="line"><span class="number">00000270</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">0</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> f8 <span class="number">09</span> <span class="number">00</span> <span class="number">00</span>  |<span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="built_in">.</span>|</span><br><span class="line"><span class="number">00000280</span>  <span class="number">09</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>f <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |<span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="attribute">...</span><span class="built_in">.</span>|</span><br><span class="line"><span class="number">00000290</span>  <span class="number">14</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">14</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span>  <span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">..  </span><br><span class="line"></span><span class="attribute">...</span><span class="attribute">...</span><span class="built_in">..  </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">.. </span><span class="built_in">..  </span><span class="number">28</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">17</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |<span class="attribute">...</span><span class="attribute">...</span><span class="built_in">..</span>(<span class="attribute">...</span><span class="attribute">...</span><span class="built_in">.</span>|</span><br><span class="line"><span class="number">00000300</span>  <span class="number">2</span>c <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">27</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">17</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>c <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span>  |,<span class="attribute">...</span><span class="string">'...........|</span><br><span class="line">00000310  .. .. .. .. .. .. .. ..  14 0a 00 00</span></span><br></pre></td></tr></table></figure>
+<p>以第一个 DexProtoId 为例，<br>shortyIdx=0x06 =&gt; stringIdOff=0x88 =&gt; stringDataOff=0x0544 =&gt; IL<br>returnTypeIdx=0x00 =&gt; stringId=0x05 =&gt; StringIdOff=0x84 =&gt; stringDataOff=0x0541 =&gt; I<br>parametersOff=0x0a40 =&gt; <code>01 00 00 00 18 00</code> =&gt; typeIdOff=0x240 =&gt; stringIdOff=0x29 =&gt; stringDataOff=0x079c =&gt; [B<br>即此函数声明为 int (Byte[])</p>
+<p><strong>以此类推：</strong></p>
+<table>
+<thead>
+<tr>
+<th>序数</th>
+<th>原型</th>
+<th>返回值</th>
+<th>参数</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>IL</td>
+<td>I</td>
+<td>[B</td>
+<td>int (Byte[])</td>
+</tr>
+<tr>
+<td>0x01</td>
+<td>J</td>
+<td>J</td>
+<td>无</td>
+<td>long ()</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>JL</td>
+<td>J</td>
+<td>Ljava/io/File;</td>
+<td>long (File)</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>L</td>
+<td>Ljava/io/File;</td>
+<td>无</td>
+<td>File ()</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>LL</td>
+<td>Ljava/io/InputStream;</td>
+<td>Ljava/util/zip/ZipEntry;</td>
+<td>InputStream (ZipENtry)</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>L</td>
+<td>Ljava/lang/String;</td>
+<td>无</td>
+<td>String ()</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>LL</td>
+<td>Ljava/util/zip/ZipEntry;</td>
+<td>Ljava/lang/String;</td>
+<td>ZipEntry (String)</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>ZLL</td>
+<td>Z</td>
+<td>Landroid/app/Application; Ljava/lang/String;</td>
+<td>bool (Application,String)</td>
+</tr>
+<tr>
+<td>0x11</td>
+<td>ZL</td>
+<td>Z</td>
+<td>Ljava/lang/Object;</td>
+<td>bool (Object)</td>
+</tr>
+<tr>
+<td>0x12</td>
+<td>ZL</td>
+<td>Z</td>
+<td>Ljava/lang/String;</td>
+<td>bool (String)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="写程序解析">写程序解析</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseProtos</span><span class="params">(f)</span>:</span></span><br><span class="line">    <span class="string">'''</span><br><span class="line">    此函数基于 parseStrings 和 parseTypes 函数的结果</span><br><span class="line">    '''</span></span><br><span class="line"></span><br><span class="line">    cur_pos = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(DexStruct.DexHeader[<span class="string">'protoIdsSize'</span>]):</span><br><span class="line">        f.seek(DexStruct.DexHeader[<span class="string">'protoIdsOff'</span>] + cur_pos)</span><br><span class="line"></span><br><span class="line">        proto_shortyId = struct.unpack(<span class="string">'I'</span>,f.read(<span class="number">4</span>))[<span class="number">0</span>]</span><br><span class="line">        proto_returnTypeId = struct.unpack(<span class="string">'I'</span>,f.read(<span class="number">4</span>))[<span class="number">0</span>]</span><br><span class="line">        proto_paramtersOff = struct.unpack(<span class="string">'I'</span>,f.read(<span class="number">4</span>))[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">        parameters = []</span><br><span class="line">        <span class="keyword">if</span> proto_paramtersOff &gt; <span class="number">0</span>:  <span class="comment"># 有参数再读取</span></span><br><span class="line">            f.seek(proto_paramtersOff)</span><br><span class="line">            param_size = struct.unpack(<span class="string">'I'</span>,f.read(<span class="number">4</span>))[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(param_size):</span><br><span class="line">                param_typeId = struct.unpack(<span class="string">'H'</span>,f.read(<span class="number">2</span>))[<span class="number">0</span>]</span><br><span class="line">                parameters.append(DexStruct.DexTypes[param_typeId][<span class="string">'content'</span>])</span><br><span class="line"></span><br><span class="line">        tmpDexProto = &#123;</span><br><span class="line">            <span class="string">'shortyDescription'</span> : DexStruct.DexStrings[proto_shortyId][<span class="string">'content'</span>],</span><br><span class="line">            <span class="string">'returnType'</span> : DexStruct.DexTypes[proto_returnTypeId][<span class="string">'content'</span>],</span><br><span class="line">            <span class="string">'parameters'</span> :  parameters,</span><br><span class="line">        &#125;;</span><br><span class="line">        DexStruct.DexProtos.append(tmpDexProto)</span><br><span class="line"></span><br><span class="line">        cur_pos += <span class="number">12</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="FieldIds">FieldIds</h1><p>fields 表示的是类中的字段，包括本字段所属的类、字段类型和字段名。<br>FieldIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
+<h2 id="结构-1">结构</h2><p>以 4 字节对齐。</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"field_id_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexFieldId &#123;</span><br><span class="line">    u2  classIdx;           /<span class="keyword">*</span> 指向 typeIds 的索引，表示定义这个字段的类 <span class="keyword">*</span>/</span><br><span class="line">    u2  typeIdx;            /<span class="keyword">*</span> 指向 typeIds 的索引，表示字段类型 <span class="keyword">*</span>/</span><br><span class="line">    u4  nameIdx;            /<span class="keyword">*</span> 指向 stringIds 的索引，表示字段名<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="手动查找">手动查找</h2><p><strong>某 dex 文件的 FieldIds 部分</strong>：</p>
+<p>fieldIdsSize : 0x01<br>fieldIdsOff : 0x031c</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">00000310  .. .. .. .. .. .. .. ..  .. .. .. .. 04 00 0f 00  |<span class="string">'...............</span>|</span><br><span class="line">00000320  04 00 00 00 .. .. .. ..  .. .. .. .. .. .. .. ..  |<span class="string">................</span>|</span><br></pre></td></tr></table></figure>
+<p>由 DexFieldId 可得 ：<br>classIdx=0x0004 =&gt; typeId=0x0d =&gt; stringDataOff=0x00a4 =&gt; Landroid/os/Build;<br>typeIdx=0x000f =&gt; typeId=0x18 =&gt; stringDataOff=0x00d0 =&gt; Ljava/lang/String;<br>nameIdx=0x00000004 =&gt; stringDataOff=0x0538 =&gt; CPU_ABI</p>
+<h2 id="写程序解析-1">写程序解析</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseFields</span><span class="params">(f)</span>:</span></span><br><span class="line">    <span class="string">'''</span><br><span class="line">    此函数基于 parseStrings 和 parseTypes 函数的结果</span><br><span class="line">    '''</span></span><br><span class="line">    f.seek(DexStruct.DexHeader[<span class="string">'fieldIdsOff'</span>])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(DexStruct.DexHeader[<span class="string">'fieldIdsSize'</span>]):</span><br><span class="line">        field_class = DexStruct.DexTypes[struct.unpack(<span class="string">'H'</span>,f.read(<span class="number">2</span>))[<span class="number">0</span>]][<span class="string">'content'</span>]</span><br><span class="line">        field_type = DexStruct.DexTypes[struct.unpack(<span class="string">'H'</span>,f.read(<span class="number">2</span>))[<span class="number">0</span>]][<span class="string">'content'</span>]</span><br><span class="line">        field_name = DexStruct.DexStrings[struct.unpack(<span class="string">'I'</span>,f.read(<span class="number">4</span>))[<span class="number">0</span>]][<span class="string">'content'</span>]</span><br><span class="line"></span><br><span class="line">        tmpDexFieldItem = &#123;</span><br><span class="line">            <span class="string">'class'</span> : field_class,</span><br><span class="line">            <span class="string">'Type'</span> : field_type,</span><br><span class="line">            <span class="string">'name'</span> : field_name,</span><br><span class="line">        &#125;</span><br><span class="line">        DexStruct.DexFields.append(tmpDexFieldItem)</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="Methods">Methods</h1><p>MethodId 表示的是方法，包括本方法所属的类、方法原型 (proto) 和方法名。<br>MethodId 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
+<h2 id="结构-2">结构</h2><p>以 4 字节对齐。</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"method_id_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexMethodId &#123;</span><br><span class="line">    u2  classIdx;           /<span class="keyword">*</span> 指向 typeIds，表示定义这个方法的类 <span class="keyword">*</span>/</span><br><span class="line">    u2  protoIdx;           /<span class="keyword">*</span> 指向 protoIds，表示方法的原型<span class="keyword">*</span>/</span><br><span class="line">    u4  nameIdx;            /<span class="keyword">*</span> 指向 stringIds，表示方法名 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="手动查找-1">手动查找</h2><p><strong>某 dex 文件的 methodIds 部分</strong>：</p>
+<p>methodIdsSize : 0x2b<br>methodIdsOff : 0x0324</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000320</span>  .. .. .. .. <span class="number">02</span> <span class="number">00</span> <span class="number">07</span> <span class="number">00</span>  <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">02</span> <span class="number">00</span> <span class="number">08</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000330</span>  <span class="number">30</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> .. ...</span><br><span class="line">........</span><br><span class="line"><span class="number">00000470</span>  <span class="number">42</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">15</span> <span class="number">00</span> <span class="number">04</span> <span class="number">00</span>  <span class="number">43</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
+<p>以第一个 <code>02 00 07 00 03 00 00 00</code> 为例：<br>classIdx=0x02 =&gt; Landroid/app/Application;<br>protoIdx=0x07 =&gt; void ()<br>nameIdx=0x03 =&gt; @init@ (@替换为尖括号)<br>即该函数为 void android.app.Application.@init@()</p>
+<p>以此类推：</p>
+<table>
+<thead>
+<tr>
+<th>序数</th>
+<th>所属的类</th>
+<th>函数原型</th>
+<th>函数名</th>
+<th>全称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>Landroid/app/Application;</td>
+<td>void ()</td>
+<td><init></init></td>
+<td>void android.app.Application.<init>()</init></td>
+</tr>
+<tr>
+<td>0x01</td>
+<td>Landroid/app/Application;</td>
+<td>void (android.content.Context)</td>
+<td>attachBaseContext</td>
+<td>void android.app.Application.attachBaseContext(android.content.Context)</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr>
+<td>0x2b</td>
+<td>Ljava/util/zip/ZipFile;</td>
+<td>InputStream (ZipENtry)</td>
+<td>getInputStream</td>
+<td>java.io.InputStream java.util.zip.ZipFile.getInputStream(java.util.zip.ZipEntry)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="写程序解析-2">写程序解析</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseMethods</span><span class="params">(f)</span>:</span></span><br><span class="line">    <span class="string">'''</span><br><span class="line">    此函数基于 parseStrings、parseProtos 和 parseTypes 函数的结果</span><br><span class="line">    '''</span></span><br><span class="line"></span><br><span class="line">    f.seek(DexStruct.DexHeader[<span class="string">'methodIdsOff'</span>])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(DexStruct.DexHeader[<span class="string">'methodIdsSize'</span>]):</span><br><span class="line">        method_class = DexStruct.DexTypes[struct.unpack(<span class="string">'H'</span>,f.read(<span class="number">2</span>))[<span class="number">0</span>]][<span class="string">'content'</span>]</span><br><span class="line">        method_proto = DexStruct.DexProtos[struct.unpack(<span class="string">'H'</span>,f.read(<span class="number">2</span>))[<span class="number">0</span>]]</span><br><span class="line">        method_name = DexStruct.DexStrings[struct.unpack(<span class="string">'I'</span>,f.read(<span class="number">4</span>))[<span class="number">0</span>]][<span class="string">'content'</span>]</span><br><span class="line"></span><br><span class="line">        tmpDexMethodItem = &#123;</span><br><span class="line">            <span class="string">'class'</span> : method_class,</span><br><span class="line">            <span class="string">'proto'</span> : method_proto,</span><br><span class="line">            <span class="string">'name'</span> : method_name,</span><br><span class="line">        &#125;</span><br><span class="line">        DexStruct.DexMethods.append(tmpDexMethodItem)</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="Reference">Reference</h1><p><a href="https://source.android.com/devices/tech/dalvik/dex-format.html" target="_blank" rel="external">Dalvik Executable format</a></p>
+<p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">《Android 软件安全与逆向分析》</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android-安全/" rel="tag">#Android 安全</a>
+          
+            <a href="/tags/dex/" rel="tag">#dex</a>
+          
+        </div>
+      
+
+
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/19/parse-dex-file-part-strings-and-type-descriptors/" rel="next" title="解析 dex 文件结构 - 索引区和数据区（一） - Strings & Types">
+                <i class="fa fa-chevron-left"></i> 解析 dex 文件结构 - 索引区和数据区（一） - Strings & Types
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2015/11/20/parse-dex-file-part-protos-fields-methods/"
+                   data-title="解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods" data-url="http://kiya-z.github.io/2015/11/20/parse-dex-file-part-protos-fields-methods/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.jpg" alt="Kiya" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Kiya</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">Stupid Girl.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/kiya-z" target="_blank">
+                  <i class="fa fa-github"></i> github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/kiiiiiiiya" target="_blank">
+                  <i class="fa fa-twitter"></i> twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/kiya-z" target="_blank">
+                  <i class="fa fa-zhihu"></i> zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+            <p class="site-author-name">友情链接</p>
+            
+              <span class="links-of-author-item">
+                <a href="http://hkcoding.sinaapp.com" target="_blank">Hanks</a>
+              </span>
+            
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ProtoIds"><span class="nav-number">1.</span> <span class="nav-text">ProtoIds</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#结构"><span class="nav-number">1.1.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#手工查找"><span class="nav-number">1.2.</span> <span class="nav-text">手工查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写程序解析"><span class="nav-number">1.3.</span> <span class="nav-text">写程序解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FieldIds"><span class="nav-number">2.</span> <span class="nav-text">FieldIds</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#结构-1"><span class="nav-number">2.1.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#手动查找"><span class="nav-number">2.2.</span> <span class="nav-text">手动查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写程序解析-1"><span class="nav-number">2.3.</span> <span class="nav-text">写程序解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Methods"><span class="nav-number">3.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#结构-2"><span class="nav-number">3.1.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#手动查找-1"><span class="nav-number">3.2.</span> <span class="nav-text">手动查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写程序解析-2"><span class="nav-number">3.3.</span> <span class="nav-text">写程序解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kiya</span>
+
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <span id="busuanzi_container_site_uv">
+      哎呀!你抢到了第<span id="busuanzi_value_site_uv"></span>枚板凳
+  </span>
+
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"kiiiiiiiya-z-github-io"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.2" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+
+      motionIntegrator.bootstrap();
+    });
+  </script>
+
+  
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
