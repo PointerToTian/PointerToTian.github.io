@@ -53,7 +53,8 @@
 <meta property="og:url" content="http://kiya-z.github.io/2015/11/19/parse-dex-file-part-strings-and-type-descriptors/index.html">
 <meta property="og:site_name" content="kiya's pigsty">
 <meta property="og:description" content="前言在 解析 dex 文件结构 - DexHeader 中我们知道 Table 部分就是索引结构区，他们是是作为指向 Data 区数据的结构索引而存在的。数据区是 dex 会用到的全部数据。">
-<meta property="og:updated_time" content="2015-11-20T10:15:41.744Z">
+<meta property="og:image" content="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-1.png">
+<meta property="og:updated_time" content="2015-11-21T06:29:37.251Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解析 dex 文件结构 - 索引区和数据区（一） - Strings & Types">
 <meta name="twitter:description" content="前言在 解析 dex 文件结构 - DexHeader 中我们知道 Table 部分就是索引结构区，他们是是作为指向 Data 区数据的结构索引而存在的。数据区是 dex 会用到的全部数据。">
@@ -278,6 +279,7 @@
       
         <span itemprop="articleBody"><h1 id="前言">前言</h1><p>在 <a href="http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/">解析 dex 文件结构 - DexHeader</a> 中我们知道 Table 部分就是索引结构区，他们是是作为指向 Data 区数据的结构索引而存在的。<br>数据区是 dex 会用到的全部数据。</p>
 <a id="more"></a>
+<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-1.png" alt="part-1"></p>
 <hr>
 <h1 id="StringIds_和_StringData">StringIds 和 StringData</h1><p>StringIds 存放的是字符串的 id，也就是数据区中各个 StringData 的文件偏移。<br>StringIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
 <h2 id="结构">结构</h2><p>StringIds 以4字节对齐，即总大小为 4 * stringIdsSize .</p>
