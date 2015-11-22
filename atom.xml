@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-22T16:26:39.474Z</updated>
+  <updated>2015-11-22T16:48:45.390Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://kiya-z.github.io/2015/11/21/parse-dex-file-part-classdefs/"/>
     <id>http://kiya-z.github.io/2015/11/21/parse-dex-file-part-classdefs/</id>
     <published>2015-11-21T15:17:50.000Z</published>
-    <updated>2015-11-22T16:26:39.474Z</updated>
+    <updated>2015-11-22T16:48:45.390Z</updated>
     <content type="html"><![CDATA[<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-3.png" alt="part-class-defs"></p>
 <a id="more"></a>
 <p>ClassDefs 表示某个类的全部信息，包括类类型、访问权限、父类、接口、源文件名、注解和代码等信息。<br>ClassDefs 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
@@ -593,7 +593,8 @@
 </tr>
 <tr>
 <td>handlers</td>
-<td>DexCatchHandler[abs(size)]    abs(size) 个handler, 存放的是指定类型的异常.</td>
+<td>DexCatchHandler[abs(size)]</td>
+<td>abs(size) 个handler, 存放的是指定类型的异常.</td>
 </tr>
 <tr>
 <td>catch_all_addr</td>
