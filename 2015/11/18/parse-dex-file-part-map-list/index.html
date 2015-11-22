@@ -47,17 +47,17 @@
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
 
 
-<meta name="description" content="什么是 map_list？整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。">
+<meta name="description">
 <meta property="og:type" content="article">
 <meta property="og:title" content="解析 dex 文件结构 - map_list">
 <meta property="og:url" content="http://kiya-z.github.io/2015/11/18/parse-dex-file-part-map-list/index.html">
 <meta property="og:site_name" content="kiya's pigsty">
-<meta property="og:description" content="什么是 map_list？整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。">
+<meta property="og:description">
 <meta property="og:image" content="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-map-list.png">
-<meta property="og:updated_time" content="2015-11-21T08:09:33.555Z">
+<meta property="og:updated_time" content="2015-11-21T14:38:34.294Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解析 dex 文件结构 - map_list">
-<meta name="twitter:description" content="什么是 map_list？整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。">
+<meta name="twitter:description">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -277,9 +277,9 @@
       
 
       
-        <span itemprop="articleBody"><h2 id="什么是_map_list？">什么是 map_list？</h2><p>整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。</p>
+        <span itemprop="articleBody"><p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-map-list.png" alt="map-list"></p>
 <a id="more"></a>
-<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-map-list.png" alt="map-list"></p>
+<h2 id="什么是_map_list？">什么是 map_list？</h2><p>整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。</p>
 <p>更加具体的解释在下面的 type 段落部分。</p>
 <hr>
 <h2 id="结构">结构</h2><p>来到 mapOff 指定的偏移处，首先是 DexMapList 结构，存储了 map_list 内 map_item (DexMapItem) 的个数和内容，也就是说在 size 之后，有 size 个DexMapItem 类型的数据。</p>
@@ -521,7 +521,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

@@ -47,17 +47,17 @@
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
 
 
-<meta name="description" content="ProtoIdsProtoIds 存放的是原型的声明，包括原型简名、参数和返回值。ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。">
+<meta name="description">
 <meta property="og:type" content="article">
 <meta property="og:title" content="解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods">
 <meta property="og:url" content="http://kiya-z.github.io/2015/11/20/parse-dex-file-part-protos-fields-methods/index.html">
 <meta property="og:site_name" content="kiya's pigsty">
-<meta property="og:description" content="ProtoIdsProtoIds 存放的是原型的声明，包括原型简名、参数和返回值。ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。">
+<meta property="og:description">
 <meta property="og:image" content="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-2.png">
-<meta property="og:updated_time" content="2015-11-21T06:30:37.051Z">
+<meta property="og:updated_time" content="2015-11-22T11:46:02.279Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods">
-<meta name="twitter:description" content="ProtoIdsProtoIds 存放的是原型的声明，包括原型简名、参数和返回值。ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。">
+<meta name="twitter:description">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -278,8 +278,8 @@
 
       
         <span itemprop="articleBody"><p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-2.png" alt="part-2"></p>
-<h1 id="ProtoIds">ProtoIds</h1><p>ProtoIds 存放的是<strong>原型的声明</strong>，包括原型简名、参数和返回值。<br>ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
 <a id="more"></a>
+<h1 id="ProtoIds">ProtoIds</h1><p>ProtoIds 存放的是<strong>原型的声明</strong>，包括原型简名、参数和返回值。<br>ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
 <h2 id="结构">结构</h2><p>ProtoIds 以4字节对齐，即总大小为 4 * 3 * protoIdsSize .</p>
 <figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"proto_id_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexProtoId &#123;</span><br><span class="line">    u4  shortyIdx;          /<span class="keyword">*</span> 指向 stringIds 的索引，表示简名 <span class="keyword">*</span>/</span><br><span class="line">    u4  returnTypeIdx;      /<span class="keyword">*</span> 指向 TypeIds 的索引，表示返回类型 <span class="keyword">*</span>/</span><br><span class="line">    u4  parametersOff;      /<span class="keyword">*</span> 指向 type_list 的文件偏移，表示参数列表，为 0 表示没有参数，参数类型中没有空<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"type_list"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexTypeList &#123;</span><br><span class="line">    u4  size;               /<span class="keyword">*</span> DexTypeItem 的个数 <span class="keyword">*</span>/</span><br><span class="line">    DexTypeItem list[1];    /<span class="keyword">*</span> DexTypeItem 数组内容 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -473,6 +473,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2015/11/21/parse-dex-file-part-classdefs/" rel="prev" title="解析 dex 文件结构 - 索引区和数据区（三） - ClassDefs">
+                解析 dex 文件结构 - 索引区和数据区（三） - ClassDefs <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -540,7 +544,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

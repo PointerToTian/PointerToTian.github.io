@@ -4,7 +4,7 @@
   <subtitle><![CDATA[No Further Delay!]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kiya-z.github.io/"/>
-  <updated>2015-11-21T06:30:37.051Z</updated>
+  <updated>2015-11-22T15:17:32.081Z</updated>
   <id>http://kiya-z.github.io/</id>
   
   <author>
@@ -15,14 +15,648 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[解析 dex 文件结构 - 索引区和数据区（三） - ClassDefs]]></title>
+    <link href="http://kiya-z.github.io/2015/11/21/parse-dex-file-part-classdefs/"/>
+    <id>http://kiya-z.github.io/2015/11/21/parse-dex-file-part-classdefs/</id>
+    <published>2015-11-21T15:17:50.000Z</published>
+    <updated>2015-11-22T15:17:32.081Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-3.png" alt="part-class-defs"></p>
+<a id="more"></a>
+<p>ClassDefs 表示某个类的全部信息，包括类类型、访问权限、父类、接口、源文件名、注解和代码等信息。<br>ClassDefs 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
+<hr>
+<h1 id="结构">结构</h1><p>ClassDefs 以4字节对齐，即总大小为 4 * 8 * ClassDefsSize .</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"class_def_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexClassDef &#123;</span><br><span class="line">    u4  classIdx;           /<span class="keyword">*</span> 指向 typeIds 的索引，表示类的类型 <span class="keyword">*</span>/</span><br><span class="line">    u4  accessFlags;        /<span class="keyword">*</span> 类的访问标识<span class="keyword">*</span>/</span><br><span class="line">    u4  superclassIdx;      /<span class="keyword">*</span> 指向 typeIds 的索引，表示父类类型 <span class="keyword">*</span>/</span><br><span class="line">    u4  interfacesOff;      /<span class="keyword">*</span> 指向 DexTypeList 的文件偏移，表示接口<span class="keyword">*</span>/</span><br><span class="line">    u4  sourceFileIdx;      /<span class="keyword">*</span> 指向 stringIds 的索引，表示源文件名 <span class="keyword">*</span>/</span><br><span class="line">    u4  annotationsOff;     /<span class="keyword">*</span> 指向 annotations_directory_item 的文件偏移，表示注解<span class="keyword">*</span>/</span><br><span class="line">    u4  classDataOff;       /<span class="keyword">*</span> 指向 class_data_item 的文件偏移<span class="keyword">*</span>/</span><br><span class="line">    u4  staticValuesOff;    /<span class="keyword">*</span> 指向 DexEncodedArray 的文件偏移<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="classIdx">classIdx</h2><p>指向 typeIds 的索引，类类型，必须是一个类类型而不是数组或者基本类型。</p>
+<h2 id="accessFlags">accessFlags</h2><p>类的访问标识，如 public、final 等，常量定义如下，包括类、字段和方法的访问标识：</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>For Classes (and InnerClass annotations)</th>
+<th>For Fields</th>
+<th>For Methods</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACC_PUBLIC</td>
+<td>0x1</td>
+<td>public: visible everywhere</td>
+<td>public: visible everywhere</td>
+<td>public: visible everywhere</td>
+</tr>
+<tr>
+<td>ACC_PRIVATE</td>
+<td>0x2</td>
+<td>* private: only visible to defining class</td>
+<td>private: only visible to defining class</td>
+<td>private: only visible to defining class</td>
+</tr>
+<tr>
+<td>ACC_PROTECTED</td>
+<td>0x4</td>
+<td>* protected: visible to package and subclasses</td>
+<td>protected: visible to package and subclasses</td>
+<td>protected: visible to package and subclasses</td>
+</tr>
+<tr>
+<td>ACC_STATIC</td>
+<td>0x8</td>
+<td>* static: is not constructed with an outer this reference</td>
+<td>static: global to defining class</td>
+<td>static: does not take a this argument</td>
+</tr>
+<tr>
+<td>ACC_FINAL</td>
+<td>0x10</td>
+<td>final: not subclassable</td>
+<td>final: immutable after construction</td>
+<td>final: not overridable</td>
+</tr>
+<tr>
+<td>ACC_SYNCHRONIZED</td>
+<td>0x20</td>
+<td></td>
+<td></td>
+<td>synchronized: associated lock automatically acquired around call to this method.Note: This is only valid to set when ACC_NATIVE is also set.</td>
+</tr>
+<tr>
+<td>ACC_BRIDGE</td>
+<td>0x40</td>
+<td></td>
+<td></td>
+<td>bridge method, added automatically by compiler as a type-safe bridge</td>
+</tr>
+<tr>
+<td>ACC_VOLATILE</td>
+<td>0x40</td>
+<td></td>
+<td>volatile: special access rules to help with thread safety</td>
+<td></td>
+</tr>
+<tr>
+<td>ACC_TRANSIENT</td>
+<td>0x80</td>
+<td></td>
+<td>transient: not to be saved by default serialization</td>
+<td></td>
+</tr>
+<tr>
+<td>ACC_VARARGS</td>
+<td>0x80</td>
+<td></td>
+<td></td>
+<td>last argument should be treated as a “rest” argument by compiler</td>
+</tr>
+<tr>
+<td>ACC_NATIVE</td>
+<td>0x100</td>
+<td></td>
+<td></td>
+<td>native: implemented in native code</td>
+</tr>
+<tr>
+<td>ACC_INTERFACE</td>
+<td>0x200</td>
+<td>interface: multiply-implementable abstract class</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ACC_ABSTRACT</td>
+<td>0x400</td>
+<td>abstract: not directly instantiable</td>
+<td></td>
+<td>abstract: unimplemented by this class</td>
+</tr>
+<tr>
+<td>ACC_STRICT</td>
+<td>0x800</td>
+<td></td>
+<td></td>
+<td>strictfp: strict rules for floating-point arithmetic</td>
+</tr>
+<tr>
+<td>ACC_SYNTHETIC</td>
+<td>0x1000</td>
+<td>not directly defined in source code</td>
+<td>not directly defined in source code</td>
+<td>not directly defined in source code</td>
+</tr>
+<tr>
+<td>ACC_ANNOTATION</td>
+<td>0x2000</td>
+<td>declared as an annotation class</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ACC_ENUM</td>
+<td>0x4000</td>
+<td>declared as an enumerated type</td>
+<td>declared as an enumerated value</td>
+<td></td>
+</tr>
+<tr>
+<td>(unused)</td>
+<td>0x8000</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ACC_CONSTRUCTOR</td>
+<td>0x10000</td>
+<td></td>
+<td></td>
+<td>constructor method (class or instance initializer)</td>
+</tr>
+<tr>
+<td>ACC_DECLARED_SYNCHRONIZED</td>
+<td>0x20000</td>
+<td></td>
+<td></td>
+<td>declared synchronized. Note: This has no effect on execution (other than in reflection of this flag, per se).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="superclassIdx">superclassIdx</h2><p>指向 typeIds 的索引，父类类型；如果没有父类值为 NO_INDEX . 注意 NO_INDEX 值不是0，因为 0 是一个合法的索引，而且 NO_INDEX 是以 uleb128p1 编码的。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uint NO_INDEX = <span class="number">0xffffffff</span>;    <span class="comment">// == -1 if treated as a signed int</span></span><br></pre></td></tr></table></figure>
+<h2 id="interfacesOff">interfacesOff</h2><p>指向 DexTypeList 的文件偏移（在数据段中），表示接口；如果没有接口此值为 0 。<br>DexTypeList 中的值必须是类类型，并且没有重复。</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"type_list"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexTypeList &#123;</span><br><span class="line">    u4  size;               /<span class="keyword">*</span> DexTypeItem的个数 <span class="keyword">*</span>/</span><br><span class="line">    DexTypeItem list[1];    /<span class="keyword">*</span> DexTypeItem的内容 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"type_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexTypeItem &#123;</span><br><span class="line">    u2  typeIdx;            /<span class="keyword">*</span> 指向 typeIds 的索引 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="sourceFileIdx">sourceFileIdx</h2><p>指向 stringIds 的索引，表示本类所在的源文件名，如果没有这个信息值为 NO_INDEX</p>
+<h2 id="annotationsOff">annotationsOff</h2><p>指向 annotations_directory_item 的文件偏移，表示注解；如果没有注解，此值为 0 。</p>
+<h3 id="annotations_directory_item">annotations_directory_item</h3><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"annotations_directory_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexAnnotationsDirectoryItem &#123;</span><br><span class="line">    u4  classAnnotationsOff;  /<span class="keyword">*</span> 指向 DexAnnotationSetItem 的文件偏移，若无，值为0<span class="keyword">*</span>/</span><br><span class="line">    u4  fieldsSize;           /<span class="keyword">*</span> DexFieldAnnotationsItem 的个数<span class="keyword">*</span>/</span><br><span class="line">    u4  methodsSize;          /<span class="keyword">*</span> DexMethodAnnotationsItem 的个数<span class="keyword">*</span>/</span><br><span class="line">    u4  parametersSize;       /<span class="keyword">*</span> DexParameterAnnotationsItem 的个数<span class="keyword">*</span>/</span><br><span class="line">    /<span class="keyword">*</span> followed by DexFieldAnnotationsItem[fieldsSize] <span class="keyword">*</span>/</span><br><span class="line">    /<span class="keyword">*</span> followed by DexMethodAnnotationsItem[methodsSize] <span class="keyword">*</span>/</span><br><span class="line">    /<span class="keyword">*</span> followed by DexParameterAnnotationsItem[parametersSize] <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="annotation_set_item">annotation_set_item</h4><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"annotation_set_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexAnnotationSetItem &#123;</span><br><span class="line">    u4  size;               /<span class="keyword">*</span> DexAnnotationItem 的个数<span class="keyword">*</span>/</span><br><span class="line">    u4  entries[1];         /<span class="keyword">*</span> DexAnnotationItem 的内容<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"annotation_item"</span>.</span><br><span class="line"> <span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> NOTE: this structure is byte-aligned.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexAnnotationItem &#123;</span><br><span class="line">    u1  visibility;     /<span class="keyword">*</span> 可见性 <span class="keyword">*</span>/</span><br><span class="line">    u1  annotation[1];  /<span class="keyword">*</span> 以 encoded_annotation 格式编码 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>visibility 定义:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VISIBILITY_BUILD</td>
+<td>0x00</td>
+<td>编译时可见</td>
+</tr>
+<tr>
+<td>VISIBILITY_RUNTIME</td>
+<td>0x01</td>
+<td>运行时可见</td>
+</tr>
+<tr>
+<td>VISIBILITY_SYSTEM</td>
+<td>0x02</td>
+<td>运行时可见, 但是只对系统可见，用户代码不可见</td>
+</tr>
+</tbody>
+</table>
+<p><strong>encoded_annotation 格式定义：</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Format</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type_idx</td>
+<td>uleb128</td>
+<td>注解类型. 必须是类类型.</td>
+</tr>
+<tr>
+<td>size</td>
+<td>uleb128</td>
+<td>注解中 name-value 键值对的个数.</td>
+</tr>
+<tr>
+<td>elements</td>
+<td>annotation_element[size]</td>
+<td>注解的元素（不是偏移）. 元素需按 string_id 的索引升序排列.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>annotation_element格式：</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Format</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name_idx</td>
+<td>uleb128</td>
+<td>代表元素名称，是指向 stringIds 的索引 .</td>
+</tr>
+<tr>
+<td>value</td>
+<td>encoded_value</td>
+<td>元素值</td>
+</tr>
+</tbody>
+</table>
+<p><strong>encoded_value格式：</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Format</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(value_arg &lt;&lt; 5) &#124; value_type</td>
+<td>ubyte</td>
+<td>表示后面 value 的类型， 可选高三位 clarifying argument .下面详述. value_arg 表示 value 的长度(size - 1), 比如 0 表示 value 需要 1字节, 7 表示 value 需要8字节，不过还是有例外，下面详述.</td>
+</tr>
+<tr>
+<td>value</td>
+<td>ubyte[]</td>
+<td>值，不同的类型有不同的解码方式, 通常是小端存储。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>value 的格式：</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>类型值</th>
+<th>value_arg Format</th>
+<th>value Format</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VALUE_BYTE</td>
+<td>0x00</td>
+<td>必须是0</td>
+<td>ubyte[1]</td>
+<td>有符号1字节整形值</td>
+</tr>
+<tr>
+<td>VALUE_SHORT</td>
+<td>0x02</td>
+<td>size - 1 (0…1)</td>
+<td>ubyte[size]</td>
+<td>有符号4字节整型值，符号扩展</td>
+</tr>
+<tr>
+<td>VALUE_CHAR</td>
+<td>0x03</td>
+<td>size - 1 (0…1)</td>
+<td>ubyte[size]</td>
+<td>无符号4字节整型值，0扩展</td>
+</tr>
+<tr>
+<td>VALUE_INT</td>
+<td>0x04</td>
+<td>size - 1 (0…3)</td>
+<td>ubyte[size]</td>
+<td>有符号4字节整型值，符号扩展</td>
+</tr>
+<tr>
+<td>VALUE_LONG</td>
+<td>0x06</td>
+<td>size - 1 (0…7)</td>
+<td>ubyte[size]</td>
+<td>有符号8字节整型值，符号扩展</td>
+</tr>
+<tr>
+<td>VALUE_FLOAT</td>
+<td>0x10</td>
+<td>size - 1 (0…3)</td>
+<td>ubyte[size]</td>
+<td>4字节位模式，0扩展为右侧，以 IEEE754 32位浮点类型解码</td>
+</tr>
+<tr>
+<td>VALUE_DOUBLE</td>
+<td>0x11</td>
+<td>size - 1 (0…7)</td>
+<td>ubyte[size]</td>
+<td>8字节位模式，0扩展为右侧，以 IEEE754 64位浮点类型解码</td>
+</tr>
+<tr>
+<td>VALUE_STRING</td>
+<td>0x17</td>
+<td>size - 1 (0…3)</td>
+<td>ubyte[size]</td>
+<td>无符号(0扩展)4字节整形,解码为指向string_ids的索引，代表字符串</td>
+</tr>
+<tr>
+<td>VALUE_TYPE</td>
+<td>0x18</td>
+<td>size - 1 (0…3)</td>
+<td>ubyte[size]</td>
+<td>符号(0扩展)4字节整形,解码为指向type_ids的索引，代表类型或类</td>
+</tr>
+<tr>
+<td>VALUE_FIELD</td>
+<td>0x19</td>
+<td>size - 1 (0…3)</td>
+<td>ubyte[size]</td>
+<td>符号(0扩展)4字节整形,解码为指向field_ids的索引，代表字段</td>
+</tr>
+<tr>
+<td>VALUE_METHOD</td>
+<td>0x1a</td>
+<td>size - 1 (0…3)</td>
+<td>ubyte[size]</td>
+<td>符号(0扩展)4字节整形,解码为指向method_ids的索引，代表方法</td>
+</tr>
+<tr>
+<td>VALUE_ENUM</td>
+<td>0x1b</td>
+<td>size - 1 (0…3)</td>
+<td>ubyte[size]</td>
+<td>无符号(0扩展)4字节整形,解码为指向field_ids的索引，代表枚举常量</td>
+</tr>
+<tr>
+<td>VALUE_ARRAY</td>
+<td>0x1c</td>
+<td>必须是0</td>
+<td>encoded_array</td>
+<td>数组，格式为encoded_array format.</td>
+</tr>
+<tr>
+<td>VALUE_ANNOTATION</td>
+<td>0x1d</td>
+<td>必须是0</td>
+<td>encoded_annotation</td>
+<td>子注解, 格式为encoded_annotation format.</td>
+</tr>
+<tr>
+<td>VALUE_NULL</td>
+<td>0x1e</td>
+<td>必须是0</td>
+<td>(none)</td>
+<td>null</td>
+</tr>
+<tr>
+<td>VALUE_BOOLEAN</td>
+<td>0x1f</td>
+<td>boolean (0…1)</td>
+<td>(none)</td>
+<td>一比特的值， 0 代表 false ， 1 代表 true.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="field_annotations_item">field_annotations_item</h4><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"field_annotations_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexFieldAnnotationsItem &#123;</span><br><span class="line">    u4  fieldIdx;</span><br><span class="line">    u4  annotationsOff;             /<span class="keyword">*</span> 指向 DexAnnotationSetItem 的文件偏移<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="method_annotations_item">method_annotations_item</h4><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"method_annotations_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexMethodAnnotationsItem &#123;</span><br><span class="line">    u4  methodIdx;</span><br><span class="line">    u4  annotationsOff;             /<span class="keyword">*</span> 指向 DexAnnotationSetItem 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="parameter_annotations_item">parameter_annotations_item</h4><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"parameter_annotations_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexParameterAnnotationsItem &#123;</span><br><span class="line">    u4  methodIdx;</span><br><span class="line">    u4  annotationsOff;             /<span class="keyword">*</span> 指向 DexAnnotationSetRefList 的文件偏移<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"annotation_set_ref_list"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexAnnotationSetRefList &#123;</span><br><span class="line">    u4  size;</span><br><span class="line">    DexAnnotationSetRefItem list[1];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"annotation_set_ref_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexAnnotationSetRefItem &#123;</span><br><span class="line">    u4  annotationsOff;             /<span class="keyword">*</span> offset to DexAnnotationSetItem <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="常量定义">常量定义</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* annotation constants */</span></span><br><span class="line"><span class="keyword">enum</span> &#123;</span><br><span class="line">    kDexVisibilityBuild         = <span class="number">0x00</span>,     <span class="comment">/* annotation visibility */</span></span><br><span class="line">    kDexVisibilityRuntime       = <span class="number">0x01</span>,</span><br><span class="line">    kDexVisibilitySystem        = <span class="number">0x02</span>,</span><br><span class="line"></span><br><span class="line">    kDexAnnotationByte          = <span class="number">0x00</span>,</span><br><span class="line">    kDexAnnotationShort         = <span class="number">0x02</span>,</span><br><span class="line">    kDexAnnotationChar          = <span class="number">0x03</span>,</span><br><span class="line">    kDexAnnotationInt           = <span class="number">0x04</span>,</span><br><span class="line">    kDexAnnotationLong          = <span class="number">0x06</span>,</span><br><span class="line">    kDexAnnotationFloat         = <span class="number">0x10</span>,</span><br><span class="line">    kDexAnnotationDouble        = <span class="number">0x11</span>,</span><br><span class="line">    kDexAnnotationString        = <span class="number">0x17</span>,</span><br><span class="line">    kDexAnnotationType          = <span class="number">0x18</span>,</span><br><span class="line">    kDexAnnotationField         = <span class="number">0x19</span>,</span><br><span class="line">    kDexAnnotationMethod        = <span class="number">0x1a</span>,</span><br><span class="line">    kDexAnnotationEnum          = <span class="number">0x1b</span>,</span><br><span class="line">    kDexAnnotationArray         = <span class="number">0x1c</span>,</span><br><span class="line">    kDexAnnotationAnnotation    = <span class="number">0x1d</span>,</span><br><span class="line">    kDexAnnotationNull          = <span class="number">0x1e</span>,</span><br><span class="line">    kDexAnnotationBoolean       = <span class="number">0x1f</span>,</span><br><span class="line"></span><br><span class="line">    kDexAnnotationValueTypeMask = <span class="number">0x1f</span>,     <span class="comment">/* low 5 bits */</span></span><br><span class="line">    kDexAnnotationValueArgShift = <span class="number">5</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="classDataOff">classDataOff</h2><p>指向 class_data_item 的文件偏移，如果此类没有数据(如接口)，值为0.<br>除了 DexCode 之外的结构是定义在 /dalvik/libdex/DexCLass.h 文件中的，并且采用的是 uleb128 编码方式。与之前不同</p>
+<p><strong>class_data_item 定义：</strong></p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span> expanded form of class_data_item. Note: If a particular item is</span><br><span class="line"> <span class="keyword">*</span> absent (e.g., no static fields), then the corresponding pointer</span><br><span class="line"> <span class="keyword">*</span> is set to NULL. <span class="keyword">*</span>/</span><br><span class="line">struct DexClassData &#123;</span><br><span class="line">    DexClassDataHeader header;          /<span class="keyword">*</span> 字段与方法的个数 <span class="keyword">*</span>/</span><br><span class="line">    DexField<span class="keyword">*</span>          staticFields;    /<span class="keyword">*</span> 静态字段结构 <span class="keyword">*</span>/</span><br><span class="line">    DexField<span class="keyword">*</span>          instanceFields;    /<span class="keyword">*</span> 实例字段结构 <span class="keyword">*</span>/</span><br><span class="line">    DexMethod<span class="keyword">*</span>         directMethods;    /<span class="keyword">*</span> 直接方法结构 <span class="keyword">*</span>/</span><br><span class="line">    DexMethod<span class="keyword">*</span>         virtualMethods;    /<span class="keyword">*</span> 虚方法结构 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/<span class="keyword">*</span> expanded form of a class_data_item header <span class="keyword">*</span>/</span><br><span class="line">struct DexClassDataHeader &#123;</span><br><span class="line">    u4 staticFieldsSize;    /<span class="keyword">*</span>静态字段个数<span class="keyword">*</span>/</span><br><span class="line">    u4 instanceFieldsSize;  /<span class="keyword">*</span>实例字段的个数<span class="keyword">*</span>/</span><br><span class="line">    u4 directMethodsSize;   /<span class="keyword">*</span>直接方法的个数<span class="keyword">*</span>/</span><br><span class="line">    u4 virtualMethodsSize;  /<span class="keyword">*</span>虚方法的个数<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/<span class="keyword">*</span> expanded form of encoded_field <span class="keyword">*</span>/</span><br><span class="line">struct DexField &#123;</span><br><span class="line">    u4 fieldIdx;    /<span class="keyword">*</span>指向 DexFieldId 的索引 <span class="keyword">*</span>/</span><br><span class="line">    u4 accessFlags; /<span class="keyword">*</span> 访问标识 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/<span class="keyword">*</span> expanded form of encoded_method <span class="keyword">*</span>/</span><br><span class="line">struct DexMethod &#123;</span><br><span class="line">    u4 methodIdx;    /<span class="keyword">*</span> 指向 DexMethodId 的索引 <span class="keyword">*</span>/</span><br><span class="line">    u4 accessFlags;  /<span class="keyword">*</span> 访问标识 <span class="keyword">*</span>/</span><br><span class="line">    u4 codeOff;      /<span class="keyword">*</span> 指向 DexCode 的文件偏移，如果方法是abstract或者native的，值为0<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="code_item">code_item</h3><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"code_item"</span>.</span><br><span class="line"> <span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> The <span class="string">"catches"</span> table is used when throwing an exception,</span><br><span class="line"> <span class="keyword">*</span> <span class="string">"debugInfo"</span> is used when displaying an exception stack trace or</span><br><span class="line"> <span class="keyword">*</span> debugging. An offset of zero indicates that there are no entries.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexCode &#123;</span><br><span class="line">    u2  registersSize;      /<span class="keyword">*</span> 使用的寄存器个数 <span class="keyword">*</span>/</span><br><span class="line">    u2  insSize;            /<span class="keyword">*</span> 参数个数 <span class="keyword">*</span>/</span><br><span class="line">    u2  outsSize;           /<span class="keyword">*</span> 调用其他方法时使用的寄存器个数 <span class="keyword">*</span>/</span><br><span class="line">    u2  triesSize;          /<span class="keyword">*</span> Try 的个数<span class="keyword">*</span>/</span><br><span class="line">    u4  debugInfoOff;       /<span class="keyword">*</span> 调试信息(行号和局部变量信息)的文件偏移，没有的话值为0，结构为 debug_info_item<span class="keyword">*</span>/</span><br><span class="line">    u4  insnsSize;          /<span class="keyword">*</span> 指令个数，以2字节为单位<span class="keyword">*</span>/</span><br><span class="line">    u2  insns[1];           /<span class="keyword">*</span> 指令数组，指令含义参考dalvik字节码格式<span class="keyword">*</span>/</span><br><span class="line">    /<span class="keyword">*</span> 2字节用于对齐(try的结构是以4字节对齐的，只有triesSize不为0且insnsSize为奇数的时候此值才会出现) <span class="keyword">*</span>/</span><br><span class="line">    /<span class="keyword">*</span> try_item[triesSize] DexTry 结构，指示哪里有异常，怎样处理；数组中的元素必须没有重叠和覆盖 <span class="keyword">*</span>/</span><br><span class="line">    /<span class="keyword">*</span> try/catch 中 handler 的个数 <span class="keyword">*</span>/</span><br><span class="line">    /<span class="keyword">*</span> catch_handler_item[handlersSize] DexCatchHandler结构<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="debug_info_item">debug_info_item</h4><p>每个 debug_info_item 以一个变长的 header 开始(长度取决于方法的参数个数)，接着是状态机器码，最后是一个结束字节 <code>DBG_END_SEQUENCE</code>。</p>
+<p><strong>状态机器码</strong> 包含5个寄存器，同时也追踪着每个寄存器中最后一个局部变量的名字和类型，为 DBG_RESTART_LOCAL 做准备。<br><code>address</code>寄存器代表两字节指令的偏移地址，在每个 debug_info 序列里以0开始，单调递增；<br><code>line</code>寄存器代表下一条指令的行数，它在 header 中被初始化，可能会加减变化但绝不会小于 1；<br><code>source_file</code>寄存器代表行数所在的源文件，它的类型是 class_def_item 中的 source_file_idx；<br><code>prologue_end</code> 和 <code>epilogue_begin</code> 是布尔类型的标识(初始值为false)，代表下一条指令是不是函数入口或者函数结束。</p>
+<p><strong>header 的格式：</strong></p>
+<p>| Name | Format | Description |<br> | line_start | uleb128     | line 寄存器的初始值，不代表真实的入口|<br> | parameters_size |     uleb128 | 参数名字的个数. 如果是实例方法的话，不包括this. |<br> | parameter_names |     uleb128p1[parameters_size] | 方法的参数名的字符串索引. NO_INDEX 表示相关参数没有名字. 类型描述符和签名同方法的类型描述符和签名. |</p>
+<p><strong>debug_info 中字节码的值：</strong></p>
+<table>
+<thead>
+<tr>
+<th>名字</th>
+<th>值</th>
+<th>格式</th>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DBG_END_SEQUENCE</td>
+<td>0x00</td>
+<td>(none)</td>
+<td>代表调试信息的终止</td>
+</tr>
+<tr>
+<td>DBG_ADVANCE_PC</td>
+<td>0x01</td>
+<td>uleb128  addr_diff</td>
+<td>addr_diff: 地址寄存器加上此值</td>
+<td>使address寄存器指向下一个地址</td>
+</tr>
+<tr>
+<td>DBG_ADVANCE_LINE</td>
+<td>0x02</td>
+<td>sleb128 line_diff</td>
+<td>line_diff: line寄存器加上此值</td>
+<td>使line寄存器指向新的一行</td>
+</tr>
+<tr>
+<td>DBG_START_LOCAL</td>
+<td>0x03</td>
+<td>uleb128  register_num，uleb128p1 name_idx，uleb128p1 type_idx</td>
+<td>register_num: 某个寄存器，name_idx: 指向string的索引，type_idx: 指向type的索引</td>
+<td>在当前地址引入一个局部变量. name_idx 或 type_idx 可能是 NO_INDEX，代表此值未知.</td>
+</tr>
+<tr>
+<td>DBG_START_LOCAL_EXTENDED</td>
+<td>0x04</td>
+<td>uleb128 register_num，uleb128p1 name_idx，uleb128p1 type_idx，uleb128p1 sig_idx</td>
+<td>register_num: 某个寄存器，name_idx: 指向string的索引，type_idx: 指向type的索引，sig_idx: 指向string的索引，表示类型签名</td>
+<td>在当前地址引入一个带有类型签名的局部变量. name_idx 或 type_idx、sig_idx 可能是 NO_INDEX，代表此值未知.”dalvik.annotation.Signature” 有关于处理签名的说明.</td>
+</tr>
+<tr>
+<td>DBG_END_LOCAL</td>
+<td>0x05</td>
+<td>uleb128 register_num</td>
+<td>register_num: 某个寄存器</td>
+<td>代表当前地址的局部变量超出范围</td>
+</tr>
+<tr>
+<td>DBG_RESTART_LOCAL</td>
+<td>0x06</td>
+<td>uleb128 register_num</td>
+<td>register_num: 重新赋值的寄存器</td>
+<td>在当前地址重新引入一个局部变量.名字和类型同上一个局部变量.</td>
+</tr>
+<tr>
+<td>DBG_SET_PROLOGUE_END</td>
+<td>0x07</td>
+<td>(none)</td>
+<td>设置 prologue_end 状态寄存器, 表示下一个入口点应该被视作方法开始的结束(可设置方法断点的合适地方). prologue_end寄存器的值可以被任何&gt;=0x0a的特殊操作码清空.</td>
+</tr>
+<tr>
+<td>DBG_SET_EPILOGUE_BEGIN</td>
+<td>0x08</td>
+<td>(none)</td>
+<td>设置epilogue_begin状态寄存器, 表示下一个入口点应该被视作方法结束的开始(在方法结束之前使其挂起的合适地方). epilogue_begin寄存器的值可以被任何&gt;=0x0a的特殊操作码清空.</td>
+</tr>
+<tr>
+<td>DBG_SET_FILE    0x09</td>
+<td>uleb128p1 name_idx</td>
+<td>name_idx: 指向string的索引，表示源文件名; NO_INDEX 表示未知</td>
+<td>表面接下来的行号入口都与这个文件相关, 而不是 code_item 指定的默认名字.</td>
+</tr>
+<tr>
+<td>Special Opcodes</td>
+<td>0x0a…0xff</td>
+<td>(none)</td>
+<td>line、address寄存器加减, 开启新的入口点, 清空 prologue_end、 epilogue_begin寄存器. 公式如下.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Special Opcodes：</strong></p>
+<p>使 line、address 寄存器小幅度变化，开启一个新的入口点. 范围是 0x0a ~ 0xff .</p>
+<p>DBG_FIRST_SPECIAL = 0x0a  // 最小的特殊操作码<br>DBG_LINE_BASE   = -4      // 最小的行号增量<br>DBG_LINE_RANGE  = 15      // 代表行号的变化值</p>
+<p>公式：<br>adjusted_opcode = opcode - DBG_FIRST_SPECIAL<br>line += DBG_LINE_BASE + (adjusted_opcode % DBG_LINE_RANGE)<br>address += (adjusted_opcode / DBG_LINE_RANGE)</p>
+<h4 id="try_item">try_item</h4><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"try_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexTry &#123;</span><br><span class="line">    u4  startAddr;          /<span class="keyword">*</span> 异常起始地址, 2个字节为单位 <span class="keyword">*</span>/</span><br><span class="line">    u2  insnCount;          /<span class="keyword">*</span> 指令个数, 2个字节为单位，最后一个指令为 startAddr + insnCount - 1 <span class="keyword">*</span>/</span><br><span class="line">    u2  handlerOff;         /<span class="keyword">*</span> 以 handler 列表为起始的 指向异常对应的 handler 的偏移<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="catch_handler_item">catch_handler_item</h4><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Catch handler entry, used while iterating over catch_handler_items.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexCatchHandler &#123;</span><br><span class="line">    u4          typeIdx;    /<span class="keyword">*</span> catch 到的异常的类型索引，指向 typeIds <span class="keyword">*</span>/</span><br><span class="line">    u4          address;    /<span class="keyword">*</span> handler 的地址 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="番外_-_关于_catch_handler_list">番外 - 关于 catch_handler_list</h4><p>catch_handler_list 在源码中没有定义，下面的表格是其格式：</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Format</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>size</td>
+<td>uleb128</td>
+<td>handler 列表的个数</td>
+</tr>
+<tr>
+<td>list</td>
+<td>encoded_catch_handler[handlers_size]</td>
+<td>handler 列表</td>
+</tr>
+</tbody>
+</table>
+<p>单个 catch_handler 的格式：</p>
+<p>| Name | Format | Description |<br>| size  | sleb128 | 列表中 catch 到的类型的个数. 如果不是正数，则handler列表中含有可以捕获到所有异常的handler. 比如 0 表示没有指定异常的类型，只有一个所有异常handler. 2 表示有两个指定类型的异常. -1 有一个指定类型的异常和一个可以捕获到所有异常的handler. |<br>| handlers  | DexCatchHandler[abs(size)]    abs(size) 个handler, 存放的是指定类型的异常. |<br>| catch_all_addr  | uleb128 (optional) | 可以处理所有异常的 handler 的地址. size为0或者负数时此值有效. |</p>
+<h2 id="staticValuesOff;">staticValuesOff;</h2><p>指向 DexEncodedArray 的文件偏移，表示静态字段的初始值，值为0表示没有设定静态字段的初始值，静态字段被初始化为0或者null.</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"encoded_array"</span>.</span><br><span class="line"> <span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> NOTE: this structure is byte-aligned.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexEncodedArray &#123;</span><br><span class="line">    u1  array[1];                   /<span class="keyword">*</span> encoded_array 格式的数据 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>encoded_array 格式：</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Format</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>size</td>
+<td>uleb128</td>
+<td>数组元素的个数，必须不大于静态字段的个数和对应的field_list的个数，如果是小于，剩余的静态字段按照相应的类型被初始化为0或者null.</td>
+</tr>
+<tr>
+<td>values</td>
+<td>encoded_value[size]</td>
+<td>数组内容</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="手工查找">手工查找</h1><p><strong>某 dex 文件的 ClassDefs 部分</strong>：</p>
+<p>classDefsSize：0x02<br>classDefsOff：0x047c</p>
+<p>0x047c ~ 0x04bc</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000470</span>  .. .. .. .... .. .. ..   .. .. .. .. <span class="number">05</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |------------....|</span><br><span class="line"><span class="number">00000480</span>  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>e <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1f</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000490</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> c2 <span class="number">0f</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">06</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">000004</span>a0  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |............ ...|</span><br><span class="line"><span class="number">000004</span>b0  <span class="number">64</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> de <span class="number">0f</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
+<p>以第一个为例：</p>
+<ol>
+<li><p>classIdx=0x05，即第0x05个typeId，得类类型为 Lcom/shell/NativeApplication;</p>
+</li>
+<li><p>accessFlags=0x01，查表得权限 ACC_PUBLIC</p>
+</li>
+<li><p>superclassIdx=0x0e，即第0x0e个typeId，得父类类型为 Ljava/lang/Object;</p>
+</li>
+<li><p>interfacesOff=0x0000，没有实现接口</p>
+</li>
+<li><p>sourceFileIdx=0x1f，即第0x1f个stringId，得源文件名为 NativeApplication.java</p>
+</li>
+<li><p>annotationsOff=0x0000，没有注解</p>
+</li>
+<li><p>classDataOff=0x0fc2，此处数据为：</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000f</span>c0  .. .. <span class="number">00</span> <span class="number">00</span> <span class="number">05</span> <span class="number">00</span> <span class="number">03</span> <span class="number">88</span>  <span class="number">80</span> <span class="number">04</span> <span class="number">90</span> <span class="number">18</span> <span class="number">01</span> <span class="number">81</span> <span class="number">80</span> <span class="number">04</span>  |................|</span><br><span class="line"><span class="number">00000f</span>d0  b8 <span class="number">18</span> <span class="number">01</span> <span class="number">89</span> <span class="number">02</span> <span class="number">00</span> <span class="number">01</span> <span class="number">89</span>  <span class="number">02</span> <span class="number">00</span> <span class="number">01</span> <span class="number">89</span> <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000f</span>e0  <span class="number">03</span> <span class="number">04</span> <span class="number">08</span> <span class="number">81</span> <span class="number">80</span> <span class="number">04</span> d0 <span class="number">18</span>  <span class="number">03</span> <span class="number">02</span> e8 <span class="number">18</span> <span class="number">01</span> <span class="number">09</span> f4 <span class="number">19</span>  |................|</span><br></pre></td></tr></table></figure>
+<p>[<strong>注意DexClassData中数字的类型为uleb128</strong>]</p>
+<ul>
+<li><p>header：staticFieldsSize=0x00，instanceFieldsSize=0x00，directMethodsSize=0x05，virtualMethodsSize=0x00，即0个静态字段，0个实例字段，5个直接方法，0个虚方法；</p>
+</li>
+<li><p>directMethods：(共5个，以第一个为例)<br>  methodIdx=0x03，即第0x03个methodId，得直接方法为 void com.shell.NativeApplication.<clinit>()<br>  accessFlags=<code>88 80 04</code>，解码为0x10008，得方法访问权限为 ACC_STATIC 和 ACC_CONSTRUCTOR<br>  codeOff=<code>90 18</code>，解码为0xc10，得 DexCode 偏移为 0xc10</clinit></p>
+</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00000</span>c10  <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">7</span>c <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>b <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |........|.......|</span><br><span class="line"><span class="number">00000</span>c20  <span class="number">1</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">71</span> <span class="number">10</span> <span class="number">20</span> <span class="number">00</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>a <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">71</span> <span class="number">10</span>  |....q. .......q.|</span><br><span class="line"><span class="number">00000</span>c30  <span class="number">20</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>e <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">01</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  | ...............|</span><br><span class="line"><span class="number">00000</span>c40  <span class="number">83</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">04</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">70</span> <span class="number">10</span> <span class="number">1</span>d <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>e <span class="number">00</span>  |........p.......|</span><br><span class="line"><span class="number">00000</span>c50  <span class="number">01</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">88</span> <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">04</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  |................|</span><br><span class="line"><span class="number">00000</span>c60  <span class="number">70</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>e <span class="number">00</span>  <span class="number">0</span>a <span class="number">00</span> <span class="number">04</span> <span class="number">00</span> <span class="number">04</span> <span class="number">00</span> <span class="number">01</span> <span class="number">00</span>  |p...............|</span><br><span class="line"><span class="number">00000</span>c70  <span class="number">8</span>d <span class="number">0</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">38</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  <span class="number">6</span>e <span class="number">10</span> <span class="number">12</span> <span class="number">00</span> <span class="number">09</span> <span class="number">00</span> <span class="number">0</span>c <span class="number">05</span>  |...<span class="number">.8</span>...n.......|</span><br><span class="line"><span class="number">00000</span>c80  <span class="number">6</span>e <span class="number">10</span> <span class="number">11</span> <span class="number">00</span> <span class="number">05</span> <span class="number">00</span> <span class="number">0</span>a <span class="number">05</span>  <span class="number">39</span> <span class="number">05</span> <span class="number">09</span> <span class="number">00</span> <span class="number">6</span>e <span class="number">10</span> <span class="number">12</span> <span class="number">00</span>  |n......<span class="number">.9</span>...n...|</span><br></pre></td></tr></table></figure>
+<ul>
+<li>registersSize=0x0001，得寄存器个数为1</li>
+<li>insSize=0x0000，得参数个数为0</li>
+</ul>
+<pre><code>outsSize=<span class="number">0x0001</span>，调用其他方法使用寄存器个数为<span class="number">1</span>
+triesSize=<span class="number">0x0000</span>，<span class="keyword">try</span>的个数为<span class="number">0</span>
+debugInfoOff=<span class="number">0x0a7c</span>，debug信息偏移为<span class="number">0x0a7c</span>
+    &lt;!--￼<span class="number">18</span>--&gt;
+
+    header:
+        line_start(<span class="number">09</span>)=<span class="number">0x09</span>，得line寄存器的初始值为<span class="number">0x09</span>；
+        parameters_size(<span class="number">0x00</span>)=<span class="number">0x00</span>，得参数的名字的个数为<span class="number">0</span>；
+    操作码：
+        <span class="number">0x07</span>：DBG_SET_PROLOGUE_END，方法开始；
+        <span class="number">0x0e</span>：<span class="number">0x0e</span>-<span class="number">0x0a</span>=<span class="number">0x04</span>，即行号+=DBG_LINE_BASE+(<span class="number">0x04</span>%DBG_LINE_RANGE)，地址+=(<span class="number">0x04</span>/DBG_LINE_RANGE)，得行号+<span class="number">0</span>，地址+<span class="number">0</span>；
+        <span class="number">0x5a</span>：<span class="number">0x5a</span>-<span class="number">0x0a</span>=<span class="number">0x50</span>，即行号+=DBG_LINE_BASE+(<span class="number">0x50</span>%DBG_LINE_RANGE)，地址+=(<span class="number">0x50</span>/DBG_LINE_RANGE)，得行号+<span class="number">1</span>，地址+<span class="number">5</span>；
+        <span class="number">0x56</span>：<span class="number">0x56</span>-<span class="number">0x0a</span>=<span class="number">0x4c</span>，即行号+=DBG_LINE_BASE+(<span class="number">0x4c</span>%DBG_LINE_RANGE)，地址+=(<span class="number">0x4c</span>/DBG_LINE_RANGE)，得行号+<span class="number">1</span>，地址+<span class="number">5</span>；
+        <span class="number">0x00</span>：DBG_END_SEQUENCE，调试结束。
+
+insnsSize=<span class="number">0x0b</span>，即有<span class="number">0xb</span>个<span class="number">2</span>字节指令，在 <span class="number">0x00000c20</span> ~ <span class="number">0x00000c35</span> 之间
+insns={<span class="number">1</span>a <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">71</span> <span class="number">10</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">1</span>a <span class="number">00</span> <span class="number">01</span> <span class="number">00</span> <span class="number">71</span> <span class="number">10</span> <span class="number">20</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">0</span>e <span class="number">00</span>}
+</code></pre><ol>
+<li>staticValuesOff=0x0000，没有静态数据的初始值</li>
+</ol>
+<h2 id="关于_insns_中的指令数据的解析">关于 insns 中的指令数据的解析</h2><p>在 <a href="https://source.android.com/devices/tech/dalvik/dalvik-bytecode.html" target="_blank" rel="external">Dalvik bytecode</a> 找到 OpCode 的含义及格式，在 <a href="https://source.android.com/devices/tech/dalvik/instruction-formats.html" target="_blank" rel="external">Dalvik Executable instruction formats</a> 找到该格式的表示方式。</p>
+<p><strong>第1条代码：</strong></p>
+<p><strong>1a</strong> ： 含义为 <code>const-string vAA, string@BBBB</code>， 格式为 <code>1a 21c</code><br><strong>21c</strong> : 格式为 <code>AA|op BBBB</code>，表示方式有三种：<br>    <figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">op</span> vAA, <span class="operator">type</span>@BBBB</span><br><span class="line"><span class="keyword">op</span> vAA, field@BBBB</span><br><span class="line"><span class="keyword">op</span> vAA, <span class="type">string</span>@BBBB</span><br></pre></td></tr></table></figure></p>
+<p><code>1a</code> 的含义已经为我们指明，我们应该采用第三种。1a 后面的6个字节为 <code>00 00 00</code>，即 AA 是 00，BBBB 是 0000。<br>则可翻译为 <code>const-string v0, string@0000</code>， 找到第0x0个 StringId 对应的字符串 /data/data/com.zyh.lightingbackup/.lib/libexec.so .<br>最终解析为 <code>const-string v0, &quot;/data/data/com.zyh.lightingbackup/.lib/libexec.so&quot;</code></p>
+<p><strong>第2条代码：</strong></p>
+<p><strong>71</strong> ： 含义为 <code>invoke-static</code>，格式为 <code>71 35c</code><br><strong>35c</strong> ： 格式为 <code>A|G|op BBBB F|E|D|C</code> ，表示方式有7种：<br>    <figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">[A=5]</span> op &#123;vC, vD, vE, vF, vG&#125;, meth@BBBB</span><br><span class="line"><span class="comment">[A=5]</span> op &#123;vC, vD, vE, vF, vG&#125;, type@BBBB</span><br><span class="line"><span class="comment">[A=4]</span> op &#123;vC, vD, vE, vF&#125;, <span class="keyword">kind</span>@BBBB</span><br><span class="line"><span class="comment">[A=3]</span> op &#123;vC, vD, vE&#125;, <span class="keyword">kind</span>@BBBB</span><br><span class="line"><span class="comment">[A=2]</span> op &#123;vC, vD&#125;, <span class="keyword">kind</span>@BBBB</span><br><span class="line"><span class="comment">[A=1]</span> op &#123;vC&#125;, <span class="keyword">kind</span>@BBBB</span><br><span class="line"><span class="comment">[A=0]</span> op &#123;&#125;, <span class="keyword">kind</span>@BBBB</span><br></pre></td></tr></table></figure></p>
+<p>71 后面的 A = 1, G = 0，所以应该采用方式 <code>[A=1] op {vC}, kind@BBBB</code>，<br>而 BBBB = 0020, F|E|D|C = 0000，可翻译为 <code>invoke-static {v0}, kind@0020</code>，找到第 0x20 个methodId 对应的函数 void java.lang.System.load(java.lang.String) .<br>最终解析为 <code>invoke-static {v0}, Ljava/lang/System;-&gt;load(Ljava/lang/String;)V</code></p>
+<p>最后我们可以使用 apktool 将 apk 文件反编译，在 /smali/com/shell/NativeApplication.smali 文件中找到 <clinit> 方法，看代码对照！</clinit></p>
+<hr>
+<h1 id="写程序解析">写程序解析</h1><p>稍后补上。</p>
+<hr>
+<h1 id="Reference">Reference</h1><p><a href="https://source.android.com/devices/tech/dalvik/dex-format.html" target="_blank" rel="external">Dalvik Executable format</a></p>
+<p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">《Android 软件安全与逆向分析》</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-3.png" alt="part-class-defs"></p>]]>
+    
+    </summary>
+    
+      <category term="Android 安全" scheme="http://kiya-z.github.io/tags/Android-%E5%AE%89%E5%85%A8/"/>
+    
+      <category term="dex" scheme="http://kiya-z.github.io/tags/dex/"/>
+    
+      <category term="Android" scheme="http://kiya-z.github.io/categories/Android/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[解析 dex 文件结构 - 索引区和数据区（二） - Protos & Fields & Methods]]></title>
     <link href="http://kiya-z.github.io/2015/11/20/parse-dex-file-part-protos-fields-methods/"/>
     <id>http://kiya-z.github.io/2015/11/20/parse-dex-file-part-protos-fields-methods/</id>
     <published>2015-11-20T10:13:54.000Z</published>
-    <updated>2015-11-21T06:30:37.051Z</updated>
+    <updated>2015-11-22T11:46:02.279Z</updated>
     <content type="html"><![CDATA[<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-2.png" alt="part-2"></p>
-<h1 id="ProtoIds">ProtoIds</h1><p>ProtoIds 存放的是<strong>原型的声明</strong>，包括原型简名、参数和返回值。<br>ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
 <a id="more"></a>
+<h1 id="ProtoIds">ProtoIds</h1><p>ProtoIds 存放的是<strong>原型的声明</strong>，包括原型简名、参数和返回值。<br>ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>
 <h2 id="结构">结构</h2><p>ProtoIds 以4字节对齐，即总大小为 4 * 3 * protoIdsSize .</p>
 <figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"proto_id_item"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexProtoId &#123;</span><br><span class="line">    u4  shortyIdx;          /<span class="keyword">*</span> 指向 stringIds 的索引，表示简名 <span class="keyword">*</span>/</span><br><span class="line">    u4  returnTypeIdx;      /<span class="keyword">*</span> 指向 TypeIds 的索引，表示返回类型 <span class="keyword">*</span>/</span><br><span class="line">    u4  parametersOff;      /<span class="keyword">*</span> 指向 type_list 的文件偏移，表示参数列表，为 0 表示没有参数，参数类型中没有空<span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"type_list"</span>.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexTypeList &#123;</span><br><span class="line">    u4  size;               /<span class="keyword">*</span> DexTypeItem 的个数 <span class="keyword">*</span>/</span><br><span class="line">    DexTypeItem list[1];    /<span class="keyword">*</span> DexTypeItem 数组内容 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -189,8 +823,7 @@
 <p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">《Android 软件安全与逆向分析》</a></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-2.png" alt="part-2"></p>
-<h1 id="ProtoIds">ProtoIds</h1><p>ProtoIds 存放的是<strong>原型的声明</strong>，包括原型简名、参数和返回值。<br>ProtoIds 的大小和文件偏移在 DexHeader 和 map_list 中都有指定。</p>]]>
+    <![CDATA[<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-2.png" alt="part-2"></p>]]>
     
     </summary>
     
@@ -855,10 +1488,10 @@
     <link href="http://kiya-z.github.io/2015/11/18/parse-dex-file-part-map-list/"/>
     <id>http://kiya-z.github.io/2015/11/18/parse-dex-file-part-map-list/</id>
     <published>2015-11-18T09:06:28.000Z</published>
-    <updated>2015-11-21T08:09:33.555Z</updated>
-    <content type="html"><![CDATA[<h2 id="什么是_map_list？">什么是 map_list？</h2><p>整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。</p>
+    <updated>2015-11-21T14:38:34.294Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-map-list.png" alt="map-list"></p>
 <a id="more"></a>
-<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-map-list.png" alt="map-list"></p>
+<h2 id="什么是_map_list？">什么是 map_list？</h2><p>整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。</p>
 <p>更加具体的解释在下面的 type 段落部分。</p>
 <hr>
 <h2 id="结构">结构</h2><p>来到 mapOff 指定的偏移处，首先是 DexMapList 结构，存储了 map_list 内 map_item (DexMapItem) 的个数和内容，也就是说在 size 之后，有 size 个DexMapItem 类型的数据。</p>
@@ -1002,7 +1635,7 @@
 <p><a href="http://www.ituring.com.cn/book/1131" target="_blank" rel="external">《Android 软件安全与逆向分析》</a></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<h2 id="什么是_map_list？">什么是 map_list？</h2><p>整个 dex 文件的内容清单，位于数据段内，其文件偏移由 DexHeader 中的 mapOff 字段指定。</p>]]>
+    <![CDATA[<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-map-list.png" alt="map-list"></p>]]>
     
     </summary>
     
@@ -1019,7 +1652,7 @@
     <link href="http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/"/>
     <id>http://kiya-z.github.io/2015/11/17/parse-dex-file-part-dex-header/</id>
     <published>2015-11-17T14:32:58.000Z</published>
-    <updated>2015-11-21T08:10:29.287Z</updated>
+    <updated>2015-11-21T14:38:50.274Z</updated>
     <content type="html"><![CDATA[<h2 id="dex_简介">dex 简介</h2><p>dex 文件是 dalvik 虚拟机的可执行文件。</p>
 <a id="more"></a>
 <hr>
@@ -1029,8 +1662,8 @@
 <h3 id="大体结构图">大体结构图</h3><p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure.png" alt="dex-file-general-structure"></p>
 <p>大致可以将 dex 文件分为三个部分：DexHeader 、Table 是索引结构区 、data 部分是数据区。<br>程序使用到的数据都在 data section 内， Tables 是指向 data section 中具体数据结构的索引。</p>
 <hr>
-<h2 id="DexHeader_结构">DexHeader 结构</h2><p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-header.png" alt="header"></p>
-<p>头部记录了整个文件的索引。</p>
+<h2 id="DexHeader_结构">DexHeader 结构</h2><p>头部记录了整个文件的索引。</p>
+<p><img src="http://7xo976.com1.z0.glb.clouddn.com/images/github-io/Android/dex-file-general-structure-header.png" alt="header"></p>
 <figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> 160-bit SHA-1 digest.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">enum &#123; kSHA1DigestLen = 20,</span><br><span class="line">       kSHA1DigestOutputLen = kSHA1DigestLen<span class="keyword">*</span>2 +1 &#125;;</span><br><span class="line"></span><br><span class="line">/<span class="keyword">*</span></span><br><span class="line"> <span class="keyword">*</span> Direct-mapped <span class="string">"header_item"</span> struct.</span><br><span class="line"> <span class="keyword">*</span>/</span><br><span class="line">struct DexHeader &#123;</span><br><span class="line">    u1  magic[8];           /<span class="keyword">*</span> 版本标识 <span class="keyword">*</span>/</span><br><span class="line">    u4  checksum;           /<span class="keyword">*</span> adler32 检验 <span class="keyword">*</span>/</span><br><span class="line">    u1  signature[kSHA1DigestLen]; /<span class="keyword">*</span> SHA-1 哈希值 <span class="keyword">*</span>/</span><br><span class="line">    u4  fileSize;           /<span class="keyword">*</span> 整个文件大小 <span class="keyword">*</span>/</span><br><span class="line">    u4  headerSize;         /<span class="keyword">*</span> DexHeader 大小 <span class="keyword">*</span>/</span><br><span class="line">    u4  endianTag;          /<span class="keyword">*</span> 字节序标记 <span class="keyword">*</span>/</span><br><span class="line">    u4  linkSize;           /<span class="keyword">*</span> 链接段大小 <span class="keyword">*</span>/</span><br><span class="line">    u4  linkOff;            /<span class="keyword">*</span> 链接段偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  mapOff;             /<span class="keyword">*</span> DexMapList 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  stringIdsSize;      /<span class="keyword">*</span> DexStringId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  stringIdsOff;       /<span class="keyword">*</span> DexStringId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  typeIdsSize;        /<span class="keyword">*</span> DexTypeId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  typeIdsOff;         /<span class="keyword">*</span> DexTypeId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  protoIdsSize;       /<span class="keyword">*</span> DexProtoId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  protoIdsOff;        /<span class="keyword">*</span> DexProtoId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  fieldIdsSize;       /<span class="keyword">*</span> DexFieldId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  fieldIdsOff;        /<span class="keyword">*</span> DexFieldId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  methodIdsSize;      /<span class="keyword">*</span> DexMethodId 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  methodIdsOff;       /<span class="keyword">*</span> DexMethodId 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  classDefsSize;      /<span class="keyword">*</span> DexClassDef 的个数 <span class="keyword">*</span>/</span><br><span class="line">    u4  classDefsOff;       /<span class="keyword">*</span> DexClassDef 的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">    u4  dataSize;           /<span class="keyword">*</span> 数据段的大小 <span class="keyword">*</span>/</span><br><span class="line">    u4  dataOff;            /<span class="keyword">*</span> 数据段的文件偏移 <span class="keyword">*</span>/</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <h3 id="其中：">其中：</h3><table>
 <thead>
